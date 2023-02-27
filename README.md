@@ -1,5 +1,5 @@
 # myGoWebApplication
 
-🇬🇧 an educational repo to build web applications with Go 
+🇬🇧 An Udemy course accompanying educational repository to build web applications with Go (golang).
 
-🇩🇪 ein Lehr-Repo, um Webanwendungen mit Go zu entwickeln 
+🇩🇪 Ein einen Udemy-Kurs begleitendes Lehr-Repository, um Webanwendungen mit Go (golang) zu entwickeln.
