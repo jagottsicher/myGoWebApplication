@@ -11,11 +11,7 @@ import (
 // rendernTemplate serves as a wrapper and renders
 // a layout and a template from folder /templates to a desired writer
 func RenderTemplate(w http.ResponseWriter, tpml string) {
-	// create a template cache
-	tc, err := createTemplateCache()
-	if err != nil {
-		log.Fatalln("error creating template cache ", err)
-	}
+	// get the template cache from the app config
 
 	// get the right template from cache
 	t, ok := tc[tpml]
@@ -38,7 +34,7 @@ func RenderTemplate(w http.ResponseWriter, tpml string) {
 	}
 }
 
-func createTemplateCache() (map[string]*template.Template, error) {
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	theCache := map[string]*template.Template{}
 
 	// get all available files *-page.tpml from folder ./templates
