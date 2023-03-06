@@ -6,23 +6,39 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/jagottsicher/myGoWebApplication/pkg/config"
 )
+
+var app *config.AppConfig
+
+// NewTemplates sets the config for the template package
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
 
 // rendernTemplate serves as a wrapper and renders
 // a layout and a template from folder /templates to a desired writer
 func RenderTemplate(w http.ResponseWriter, tpml string) {
-	// get the template cache from the app config
+	var tc map[string]*template.Template
+
+	if app.UseCache {
+		// get the template cache from the app config
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplateCache()
+	}
 
 	// get the right template from cache
 	t, ok := tc[tpml]
 	if !ok {
-		log.Fatalln("template not in cache for some reason ", err)
+		log.Fatalln("template not in cache for some reason ", ok)
 	}
 
 	// store result in a buffer and double-check if it is a valid value
 	buf := new(bytes.Buffer)
 
-	err = t.Execute(buf, nil)
+	err := t.Execute(buf, nil)
 	if err != nil {
 		log.Println(err)
 	}
