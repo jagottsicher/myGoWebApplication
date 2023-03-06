@@ -1,64 +1,73 @@
 package render
 
 import (
-	"fmt"
+	"bytes"
 	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
 )
 
 // rendernTemplate serves as a wrapper and renders
 // a layout and a template from folder /templates to a desired writer
-func RenderTemplateTemp(w http.ResponseWriter, tpml string) {
-	parsedTemplate, _ := template.ParseFiles("./templates/"+tpml, "./templates/base-layout.tpml")
-	err := parsedTemplate.Execute(w, nil)
+func RenderTemplate(w http.ResponseWriter, tpml string) {
+	// create a template cache
+	tc, err := createTemplateCache()
 	if err != nil {
-		fmt.Println("error parsing template:", err)
-	}
-}
-
-var tc = make(map[string]*template.Template)
-
-func RenderTemplate(w http.ResponseWriter, t string) {
-	var tmpl *template.Template
-	var err error
-
-	// check to see if we already have the template in our cache
-	_, inMap := tc[t]
-	if !inMap {
-		// need to create the template
-		log.Println("creating template and adding to cache")
-		err = createTemplateCache(t)
-		if err != nil {
-			log.Println(err)
-		}
-	} else {
-		// we have the template in the cache
-		log.Println("using cached template")
+		log.Fatalln("error creating template cache ", err)
 	}
 
-	tmpl = tc[t]
+	// get the right template from cache
+	t, ok := tc[tpml]
+	if !ok {
+		log.Fatalln("template not in cache for some reason ", err)
+	}
 
-	err = tmpl.Execute(w, nil)
+	// store result in a buffer and double-check if it is a valid value
+	buf := new(bytes.Buffer)
+
+	err = t.Execute(buf, nil)
+	if err != nil {
+		log.Println(err)
+	}
+
+	// render that template
+	_, err = buf.WriteTo(w)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func createTemplateCache(t string) error {
-	templates := []string{
-		fmt.Sprintf("./templates/%s", t),
-		"./templates/base-layout.tpml",
-	}
+func createTemplateCache() (map[string]*template.Template, error) {
+	theCache := map[string]*template.Template{}
 
-	// parse the template
-	tmpl, err := template.ParseFiles(templates...)
+	// get all available files *-page.tpml from folder ./templates
+	pages, err := filepath.Glob("./templates/*-page.tpml")
 	if err != nil {
-		return err
+		return theCache, err
 	}
 
-	// add template to cache (map)
-	tc[t] = tmpl
+	// range through the slice of *-page.tpml
+	for _, page := range pages {
+		name := filepath.Base(page)
+		ts, err := template.New(name).ParseFiles(page)
+		if err != nil {
+			return theCache, err
+		}
 
-	return nil
+		matches, err := filepath.Glob("./templates/*-layout.tpml")
+		if err != nil {
+			return theCache, err
+		}
+
+		if len(matches) > 0 {
+			ts, err = ts.ParseGlob("./templates/*-layout.tpml")
+			if err != nil {
+				return theCache, err
+			}
+		}
+
+		theCache[name] = ts
+	}
+	return theCache, nil
 }
