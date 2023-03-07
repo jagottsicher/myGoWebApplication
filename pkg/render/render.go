@@ -8,7 +8,14 @@ import (
 	"path/filepath"
 
 	"github.com/jagottsicher/myGoWebApplication/pkg/config"
+	"github.com/jagottsicher/myGoWebApplication/pkg/models"
 )
+
+// AddDefaultData contains Data which will be added to data sent to templates
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+
+	return td
+}
 
 var app *config.AppConfig
 
@@ -19,7 +26,7 @@ func NewTemplates(a *config.AppConfig) {
 
 // rendernTemplate serves as a wrapper and renders
 // a layout and a template from folder /templates to a desired writer
-func RenderTemplate(w http.ResponseWriter, tpml string) {
+func RenderTemplate(w http.ResponseWriter, tpml string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -38,7 +45,9 @@ func RenderTemplate(w http.ResponseWriter, tpml string) {
 	// store result in a buffer and double-check if it is a valid value
 	buf := new(bytes.Buffer)
 
-	err := t.Execute(buf, nil)
+	td = AddDefaultData(td)
+
+	err := t.Execute(buf, td)
 	if err != nil {
 		log.Println(err)
 	}

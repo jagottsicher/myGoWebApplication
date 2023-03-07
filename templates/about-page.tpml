@@ -5,7 +5,8 @@
         <div class="row">
             <div class="col">
                 <h1>This is the about page</h1>
-                YYY Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente ducimus possimus praesentium quaerat libero omnis rem eius quas qui iure id tenetur autem est eum, commodi ipsa sit labore nam!
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente ducimus possimus praesentium quaerat libero omnis rem eius quas qui iure id tenetur autem est eum, commodi ipsa sit labore nam!
+                <p>Rick's sidekick Morty doesn't really have a catchphrase but likes to say something like {{index .StringMap "morty"}}</p>
             </div>
         </div>
     </div>

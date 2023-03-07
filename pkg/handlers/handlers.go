@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/jagottsicher/myGoWebApplication/pkg/config"
+	"github.com/jagottsicher/myGoWebApplication/pkg/models"
 	"github.com/jagottsicher/myGoWebApplication/pkg/render"
 )
 
@@ -29,10 +30,18 @@ func NewHandlers(r *Repository) {
 
 // Home is the handler for the home page
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "home-page.tpml")
+	render.RenderTemplate(w, "home-page.tpml", &models.TemplateData{})
 }
 
 // About is the handler for the about page
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "about-page.tpml")
+	// some data or calculation takes place
+
+	sidekickMap := make(map[string]string)
+	sidekickMap["morty"] = "Ooh, wee!"
+
+	// send the result or any prepared data to the template
+	render.RenderTemplate(w, "about-page.tpml", &models.TemplateData{
+		StringMap: sidekickMap,
+	})
 }
