@@ -122,6 +122,8 @@
 
     <script src="https://unpkg.com/notie"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
       // Example starter JavaScript for disabling form submissions if there are invalid fields
       (() => {
@@ -148,17 +150,27 @@
         format: "yyyy-mm-dd"
       }); 
 
-      function notify(msg, msgType){
+      function notify(msg, msgType) {
        notie.alert({
         type: msgType,
         text: msg,
        })
       }
 
+      function notifyModal(title, text, icon, confirmationButtonText) {
+      Swal.fire({
+        icon: icon,
+        title: title,
+        html: text,
+        confirmButtonText: confirmationButtonText,
+      })
+      }
+
+
       let anElement = document.getElementById("forTestingOnly");
 
       document.getElementById("clickButton").addEventListener("click", function() {
-        notify("Spoiler alert", "warning")
+        notifyModal("Title of our great alert", "<em>And here we want to use some HTML.</em>", "success", "Well, if you say so")
       })
     </script>
   
