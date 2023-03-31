@@ -125,6 +125,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+      let attention = Prompt();
+
       // Example starter JavaScript for disabling form submissions if there are invalid fields
       (() => {
         'use strict'
@@ -158,19 +160,86 @@
       }
 
       function notifyModal(title, text, icon, confirmationButtonText) {
-      Swal.fire({
-        icon: icon,
-        title: title,
-        html: text,
-        confirmButtonText: confirmationButtonText,
-      })
+        Swal.fire({
+          icon: icon,
+          title: title,
+          html: text,
+          confirmButtonText: confirmationButtonText,
+        })
       }
 
+      function Prompt() {
+
+        let toast = function(c) {
+          const{
+            msg = '',
+            title = '',
+            footer = '',
+          } = c; 
+
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+
+          Toast.fire({
+            icon: 'success',
+            title: title,
+            text: msg,
+            footer: footer,
+          })
+        }
+
+        let success = function(c) {
+          const {
+            msg = '',
+            title = '',
+            footer = '',
+          } = c;
+
+          Swal.fire({
+            icon: 'success',
+            title: title,
+            text: msg,
+            footer: footer,
+          })
+        }
+
+        let error = function(c) {
+          const {
+            msg = '',
+            title = '',
+            footer = '',
+          } = c;
+
+          Swal.fire({
+            icon: 'error',
+            title: title,
+            text: msg,
+            footer: footer,
+          })
+        }
+
+        return {
+          toast: toast,
+          success: success,
+          error: error,
+        }
+      }
 
       let anElement = document.getElementById("forTestingOnly");
 
       document.getElementById("clickButton").addEventListener("click", function() {
-        notifyModal("Title of our great alert", "<em>And here we want to use some HTML.</em>", "success", "Well, if you say so")
+        attention.error({
+            msg: 'Oops, I did it again...',
+        });
       })
     </script>
   
