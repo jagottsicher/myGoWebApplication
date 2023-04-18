@@ -1,0 +1,25 @@
+.bb-footer{
+  background-color: rgb(43, 48, 53);
+  height: 5em;
+  margin-top: 2em;
+  padding: 1em;
+  color: #fff;
+  font-size: 80%;
+}
+
+.notie-container {
+box-shadow: none;
+z-index: 10010;
+}
+
+.datepicker {
+z-index: 10000;
+}
+
+.swal2-html-container {
+overflow: unset !important;
+}
+
+.swal2-actions {
+z-index: auto !important;
+}

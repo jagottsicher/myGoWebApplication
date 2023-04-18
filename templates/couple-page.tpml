@@ -1,0 +1,71 @@
+{{template "base" .}}
+
+{{define "content"}}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-6 col-mg-6 col-sm-12 col-xs-12 mx-auto">
+        <div id="couple-carousell" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#couple-carousell" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#couple-carousell" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#couple-carousell" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#couple-carousell" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+            <img src="/static/images/couple-3br.jpg" class="d-block w-100" alt="eremite">
+            </div>
+            <div class="carousel-item">
+            <img src="/static/images/couple-bedroom.jpg" class="d-block w-100" alt="bedroom">
+            </div>
+            <div class="carousel-item">
+            <img src="/static/images/couple-hallway.jpg" class="d-block w-100" alt="hallway">
+            </div>
+            <div class="carousel-item">
+            <img src="/static/images/couple-kitchen.jpg" class="d-block w-100" alt="eating">
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center mt-5">The Couple's Cove</h1>
+                <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.</p>
+
+                <p>The Big Oxmox advised her not to do so, because there were thousands of bad Commas, wild Question Marks and devious Semikoli, but the Little Blind Text didn’t listen. She packed her seven versalia, put her initial into the belt and made herself on the way. When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way. On her way she met a copy.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col text-center">
+        <a href="#!" id="check-availability-button" class="btn btn-success">Check Availability!</a>
+    </div>
+</div>
+{{end}}
+
+{{define "js"}}
+  <script>
+    document.getElementById("check-availability-button").addEventListener("click", function() {
+    let html = `
+      <form id="check-availability-form" action="" method="POST" novalidate class="needs validation">
+        <div class="row g-3" id="reservation-dates-modal">
+          <div class="col">
+            <input disabled required class="form-control" type="text" name="start" id="start" placeholder="Arrival">
+          </div>
+          <div class="col">
+            <input disabled required class="form-control" type="text" name="end" id="end" placeholder="Departure">
+          </div>
+        </div>
+      </form>
+    `;
+
+    attention.custom({
+      title: 'Check Bungalow\'s Availability',
+      msg: html,
+    });
+  })
+  </script>
+{{end}}

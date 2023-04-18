@@ -39,16 +39,35 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
 // About is the handler for the about page
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	// some data or calculation takes place
+	render.RenderTemplate(w, "about-page.tpml", &models.TemplateData{})
+}
 
-	sidekickMap := make(map[string]string)
-	sidekickMap["morty"] = "Ooh, wee!"
+// Contact is the handler for the caontact page
+func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "contact-page.tpml", &models.TemplateData{})
+}
 
-	remoteIP := m.App.Session.GetString(r.Context(), "remote_ip")
-	sidekickMap["remote_ip"] = remoteIP
+// Eremite is the handler for the eremite page
+func (m *Repository) Eremite(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "eremite-page.tpml", &models.TemplateData{})
+}
 
-	// send the result or any prepared data to the template
-	render.RenderTemplate(w, "about-page.tpml", &models.TemplateData{
-		StringMap: sidekickMap,
-	})
+// Couple is the handler for the couple page
+func (m *Repository) Couple(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "couple-page.tpml", &models.TemplateData{})
+}
+
+// Family is the handler for the family page
+func (m *Repository) Family(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "family-page.tpml", &models.TemplateData{})
+}
+
+// Reservation is the handler for the reservation page
+func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "check-availability-page.tpml", &models.TemplateData{})
+}
+
+// MakeReservation is the handler for the make-reservatio page
+func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "make-reservation-page.tpml", &models.TemplateData{})
 }
