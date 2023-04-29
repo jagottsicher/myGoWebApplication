@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/jagottsicher/myGoWebApplication/pkg/config"
@@ -34,40 +35,47 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	remoteIP := r.RemoteAddr
 	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
 
-	render.RenderTemplate(w, "home-page.tpml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "home-page.tpml", &models.TemplateData{})
 }
 
 // About is the handler for the about page
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "about-page.tpml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "about-page.tpml", &models.TemplateData{})
 }
 
 // Contact is the handler for the caontact page
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "contact-page.tpml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "contact-page.tpml", &models.TemplateData{})
 }
 
 // Eremite is the handler for the eremite page
 func (m *Repository) Eremite(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "eremite-page.tpml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "eremite-page.tpml", &models.TemplateData{})
 }
 
 // Couple is the handler for the couple page
 func (m *Repository) Couple(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "couple-page.tpml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "couple-page.tpml", &models.TemplateData{})
 }
 
 // Family is the handler for the family page
 func (m *Repository) Family(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "family-page.tpml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "family-page.tpml", &models.TemplateData{})
 }
 
 // Reservation is the handler for the reservation page
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "check-availability-page.tpml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "check-availability-page.tpml", &models.TemplateData{})
+}
+
+// PostReservation is the handler for the reservation page and POST requests
+func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+	start := r.Form.Get("startingDate")
+	end := r.Form.Get("endingDate")
+	w.Write([]byte(fmt.Sprintf("Arrival date value is set to %s, departure date value to %s", start, end)))
 }
 
 // MakeReservation is the handler for the make-reservatio page
 func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "make-reservation-page.tpml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "make-reservation-page.tpml", &models.TemplateData{})
 }

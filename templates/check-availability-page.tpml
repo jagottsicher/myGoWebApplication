@@ -6,13 +6,14 @@
           <div class="col-md-3"></div>
           <div class="col-md-6">
               <h1 class="text-center">Check Availability</h1>
-              <form class="row g-2 needs-validation" id="reservation-dates" novalidate action="" method="GET">
+              <form class="row g-2 needs-validation" id="reservation-dates" novalidate action="/reservation" method="POST">
                 <div class="col mb-3">
                   <input required type="text" class="form-control" name="startingDate" id="startingDate" placeholder="Arrival Date">
                 </div>
                 <div class="col mb-3">
                   <input required type="text" class="form-control" name="endingDate" id="endingDate" placeholder="Departure Date"> 
                 </div>
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
                 <hr>
 
