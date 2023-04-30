@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/jagottsicher/myGoWebApplication/pkg/config"
@@ -73,6 +75,28 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	start := r.Form.Get("startingDate")
 	end := r.Form.Get("endingDate")
 	w.Write([]byte(fmt.Sprintf("Arrival date value is set to %s, departure date value to %s", start, end)))
+}
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+// ReservationJSON is the handler for reservation-json and returns JSON
+func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
+	resp := jsonResponse{
+		OK:      false,
+		Message: "It's available!",
+	}
+
+	output, err := json.MarshalIndent(resp, "", "    ")
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Println(string(output))
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(output)
 }
 
 // MakeReservation is the handler for the make-reservatio page
