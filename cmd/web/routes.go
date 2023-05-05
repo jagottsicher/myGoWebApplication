@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/jagottsicher/myGoWebApplication/pkg/config"
-	"github.com/jagottsicher/myGoWebApplication/pkg/handlers"
+	"github.com/jagottsicher/myGoWebApplication/internal/config"
+	"github.com/jagottsicher/myGoWebApplication/internal/handlers"
 )
 
 func routes(app *config.AppConfig) http.Handler {
