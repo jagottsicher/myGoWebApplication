@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/jagottsicher/myGoWebApplication/pkg/config"
-	"github.com/jagottsicher/myGoWebApplication/pkg/handlers"
-	"github.com/jagottsicher/myGoWebApplication/pkg/render"
+	"github.com/jagottsicher/myGoWebApplication/internal/config"
+	"github.com/jagottsicher/myGoWebApplication/internal/handlers"
+	"github.com/jagottsicher/myGoWebApplication/internal/render"
 )
 
 const portNumber = ":8080"
