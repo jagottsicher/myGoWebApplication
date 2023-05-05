@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/jagottsicher/myGoWebApplication/internal/config"
-	"github.com/jagottsicher/myGoWebApplication/internal/models"
-	"github.com/jagottsicher/myGoWebApplication/internal/render"
+	"github.com/jagottsicher/myGoWebApplication/pkg/config"
+	"github.com/jagottsicher/myGoWebApplication/pkg/models"
+	"github.com/jagottsicher/myGoWebApplication/pkg/render"
 )
 
 // Repository is the repository type
