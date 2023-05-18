@@ -19,10 +19,16 @@ func New(data url.Values) *Form {
 	}
 }
 
+// Valid returns false in case of errors, otherwise true
+func (f *Form) Valid() bool {
+	return len(f.Errors) == 0
+}
+
 // Has checks for the existence of a form field in the post and ensures is not empty
 func (f *Form) Has(field string, r *http.Request) bool {
 	formField := r.Form.Get(field)
 	if formField == "" {
+		f.Errors.Add(field, "This field cannot be empty.")
 		return false
 	}
 	return true
