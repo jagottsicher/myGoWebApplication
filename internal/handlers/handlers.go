@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/jagottsicher/myGoWebApplication/internal/config"
+	"github.com/jagottsicher/myGoWebApplication/internal/forms"
 	"github.com/jagottsicher/myGoWebApplication/internal/models"
 	"github.com/jagottsicher/myGoWebApplication/internal/render"
 )
@@ -98,7 +99,14 @@ func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
 	w.Write(output)
 }
 
-// MakeReservation is the handler for the make-reservatio page
+// MakeReservation is the handler for the make-reservation page
 func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "make-reservation-page.tpml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "make-reservation-page.tpml", &models.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
+// PostMakeReservation is the POST request handler for the reservation form
+func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
+
 }
