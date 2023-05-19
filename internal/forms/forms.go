@@ -1,9 +1,12 @@
 package forms
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/asaskevich/govalidator"
 )
 
 // Form is a type holding a genaral form struct including an url.Values object
@@ -29,7 +32,6 @@ func (f *Form) Valid() bool {
 func (f *Form) Has(field string, r *http.Request) bool {
 	formField := r.Form.Get(field)
 	if formField == "" {
-		f.Errors.Add(field, "This field cannot be empty.")
 		return false
 	}
 	return true
@@ -42,5 +44,22 @@ func (f *Form) Required(fields ...string) {
 		if len(strings.TrimSpace(value)) == 0 {
 			f.Errors.Add(field, "This field cannot be empty.")
 		}
+	}
+}
+
+// MinLength returns false if the field value is shorter than a given length, otherwise true
+func (f *Form) MinLength(field string, length int, r *http.Request) bool {
+	actualLength := r.Form.Get(field)
+	if len(strings.TrimSpace(actualLength)) < length {
+		f.Errors.Add(field, fmt.Sprintf("This field must have at least %d characters.", length))
+		return false
+	}
+	return true
+}
+
+// IsEmail checks if the value of a field is a valid email address
+func (f *Form) IsEmail(field string) {
+	if !govalidator.IsEmail(f.Get(field)) {
+		f.Errors.Add(field, "Please enter a valid email address.")
 	}
 }
