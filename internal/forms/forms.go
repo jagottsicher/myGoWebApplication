@@ -3,6 +3,7 @@ package forms
 import (
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // Form is a type holding a genaral form struct including an url.Values object
@@ -32,4 +33,14 @@ func (f *Form) Has(field string, r *http.Request) bool {
 		return false
 	}
 	return true
+}
+
+// Required checks for the existence of form fields in the post and ensures they are not empty
+func (f *Form) Required(fields ...string) {
+	for _, field := range fields {
+		value := f.Get(field)
+		if len(strings.TrimSpace(value)) == 0 {
+			f.Errors.Add(field, "This field cannot be empty.")
+		}
+	}
 }

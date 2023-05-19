@@ -101,8 +101,14 @@ func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
 
 // MakeReservation is the handler for the make-reservation page
 func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
+	var emptyReservation models.Reservation
+
+	data := make(map[string]interface{})
+	data["reservation"] = emptyReservation
+
 	render.RenderTemplate(w, r, "make-reservation-page.tpml", &models.TemplateData{
 		Form: forms.New(nil),
+		Data: data,
 	})
 }
 
@@ -122,7 +128,8 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 
 	form := forms.New(r.PostForm)
 
-	form.Has("full_name", r)
+	// form.Has("full_name", r)
+	form.Required("full_name", "email")
 
 	if !form.Valid() {
 		data := make(map[string]interface{})

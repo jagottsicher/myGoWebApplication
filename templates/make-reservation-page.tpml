@@ -6,6 +6,9 @@
           <div class="col-md-3"></div>
           <div class="col-md-6">
               <h1 class="text-center">Make A Reservation</h1>
+
+              {{$res := index .Data "reservation"}}
+
               <form action="" method="POST" class="" novalidate>
                 <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
               <div class="form-group mt-3">
@@ -13,17 +16,26 @@
                   {{with .Form.Errors.Get "full_name"}}
                   <label class="text-danger">{{.}}</label>
                   {{end}}
-                  <input class="form-control {{with .Form.Errors.Get "full_name"}}is-invalid{{end}}" id="full_name" autocomplete="off" type="text" name="full_name" value="" required>
+                  <input class="form-control {{with .Form.Errors.Get "full_name"}}is-invalid{{end}}" 
+                  id="full_name" autocomplete="off" type="text" name="full_name" value="{{$res.Name}}" required>
               </div>
 
               <div class="form-group mt-3">
                   <label for="email">Email:</label>
-                  <input class="form-control" id="email" autocomplete="off" type="email" name="email" value="" required>
+                  {{with .Form.Errors.Get "email"}}
+                  <label class="text-danger">{{.}}</label>
+                  {{end}}
+                  <input class="form-control {{with .Form.Errors.Get "email"}}is-invalid{{end}}" 
+                  id="email" autocomplete="off" type="email" name="email" value="{{$res.Email}}" required>
               </div>
 
               <div class="form-group mt-3">
                   <label for="phone">Phone:</label>
-                  <input class="form-control" id="phone" autocomplete="off" type="tel" name="phone" value="" required>
+                  {{with .Form.Errors.Get "phone"}}
+                  <label class="text-danger">{{.}}</label>
+                  {{end}}
+                  <input class="form-control {{with .Form.Errors.Get "phone"}}is-invalid{{end}}" 
+                  id="phone" autocomplete="off" type="tel" name="phone" value="{{$res.Phone}}" required>
               </div>
 
               <hr>
