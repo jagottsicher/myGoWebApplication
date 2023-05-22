@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/jagottsicher/myGoWebApplication/internal/config"
 	"github.com/jagottsicher/myGoWebApplication/internal/handlers"
+	"github.com/jagottsicher/myGoWebApplication/internal/models"
 	"github.com/jagottsicher/myGoWebApplication/internal/render"
 )
 
@@ -19,6 +21,8 @@ var session *scs.SessionManager
 
 // main is the main function
 func main() {
+	// Data to be available in the session
+	gob.Register(models.Reservation{})
 
 	// don't forget to change to true in Production!
 	app.InProduction = false
