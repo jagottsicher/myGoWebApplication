@@ -152,6 +152,8 @@ func (m *Repository) ReservationOverview(w http.ResponseWriter, r *http.Request)
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
 		log.Println("Could not get item from session.")
+		m.App.Session.Put(r.Context(), "error", "No reservation data in this session available.")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
