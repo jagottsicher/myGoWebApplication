@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -22,6 +23,7 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 }
 
 var app *config.AppConfig
+var pathToTemplates = "./templates"
 
 // NewTemplates sets the config for the template package
 func NewTemplates(a *config.AppConfig) {
@@ -63,11 +65,12 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tpml string, td *mod
 	}
 }
 
+// CreateTemplateCache creates a map and stores the tempales in for caching.
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	theCache := map[string]*template.Template{}
 
 	// get all available files *-page.tpml from folder ./templates
-	pages, err := filepath.Glob("./templates/*-page.tpml")
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*-page.tpml", pathToTemplates))
 	if err != nil {
 		return theCache, err
 	}
@@ -80,13 +83,13 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 			return theCache, err
 		}
 
-		matches, err := filepath.Glob("./templates/*-layout.tpml")
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*-layout.tpml", pathToTemplates))
 		if err != nil {
 			return theCache, err
 		}
 
 		if len(matches) > 0 {
-			ts, err = ts.ParseGlob("./templates/*-layout.tpml")
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*-layout.tpml", pathToTemplates))
 			if err != nil {
 				return theCache, err
 			}
