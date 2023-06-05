@@ -30,7 +30,7 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-// rendernTemplate serves as a wrapper and renders
+// renderTemplate serves as a wrapper and renders
 // a layout and a template from folder /templates to a desired writer
 func RenderTemplate(w http.ResponseWriter, r *http.Request, tpml string, td *models.TemplateData) {
 	var tc map[string]*template.Template
