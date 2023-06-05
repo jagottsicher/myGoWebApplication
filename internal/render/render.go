@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -32,7 +33,7 @@ func NewTemplates(a *config.AppConfig) {
 
 // renderTemplate serves as a wrapper and renders
 // a layout and a template from folder /templates to a desired writer
-func RenderTemplate(w http.ResponseWriter, r *http.Request, tpml string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tpml string, td *models.TemplateData) error {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -45,7 +46,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tpml string, td *mod
 	// get the right template from cache
 	t, ok := tc[tpml]
 	if !ok {
-		log.Fatalln("template not in cache for some reason ", ok)
+		return errors.New("template not in cache for some reason")
 	}
 
 	// store result in a buffer and double-check if it is a valid value
@@ -63,6 +64,8 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tpml string, td *mod
 	if err != nil {
 		log.Println(err)
 	}
+
+	return nil
 }
 
 // CreateTemplateCache creates a map and stores the tempales in for caching.
