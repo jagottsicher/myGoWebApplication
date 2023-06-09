@@ -3,11 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/jagottsicher/myGoWebApplication/internal/config"
 	"github.com/jagottsicher/myGoWebApplication/internal/forms"
+	"github.com/jagottsicher/myGoWebApplication/internal/helpers"
 	"github.com/jagottsicher/myGoWebApplication/internal/models"
 	"github.com/jagottsicher/myGoWebApplication/internal/render"
 )
@@ -34,10 +34,6 @@ func NewHandlers(r *Repository) {
 
 // Home is the handler for the home page
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-
-	remoteIP := r.RemoteAddr
-	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
-
 	render.RenderTemplate(w, r, "home-page.tpml", &models.TemplateData{})
 }
 
@@ -92,7 +88,8 @@ func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
 
 	output, err := json.MarshalIndent(resp, "", "    ")
 	if err != nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -116,7 +113,7 @@ func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
 		return
 	}
 
@@ -151,7 +148,7 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 func (m *Repository) ReservationOverview(w http.ResponseWriter, r *http.Request) {
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
-		log.Println("Could not get item from session.")
+		m.App.ErrorLog.Println("Could not get item from session.")
 		m.App.Session.Put(r.Context(), "error", "No reservation data in this session available.")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return

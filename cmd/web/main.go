@@ -55,7 +55,7 @@ func run() error {
 	app.InfoLog = infoLog
 
 	errorLog = log.New(os.Stdout, "[ERROR]\t", log.Ldate|log.Ltime|log.Lshortfile)
-	app.InfoLog = infoLog
+	app.ErrorLog = errorLog
 
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
