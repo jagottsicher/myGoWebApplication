@@ -1,0 +1,9 @@
+create_table("reservations") {
+  t.Column("id", "integer", {primary: true})
+  t.Column("full_name", "string", {"default": ""})
+  t.Column("email", "string", {})
+  t.Column("phone", "string", {"default": ""})
+  t.Column("start_date", "date", {})
+  t.Column("end_date", "date", {})
+  t.Column("bungalow_id", "integer", {})
+}

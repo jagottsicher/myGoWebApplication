@@ -1,0 +1,8 @@
+create_table("bungalow_restrictions") {
+  t.Column("id", "integer", {primary: true})
+  t.Column("start_date", "date", {})
+  t.Column("end_date", "date", {})
+  t.Column("bungalow_id", "integer", {})
+  t.Column("reservation_id", "integer", {})
+  t.Column("restriction_id", "integer", {})
+}
