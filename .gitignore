@@ -16,3 +16,6 @@
 
 # Exclude my Database Setup
 database.yml
+
+# ignore the git language inclusion
+.gitattributes
