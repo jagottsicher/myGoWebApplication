@@ -1,0 +1,2 @@
+drop_foreign_key("bungalow_restrictions", "bungalow_restrictions_bungalows_id_fk", {})
+drop_foreign_key("bungalow_restrictions", "bungalow_restrictions_restrictions_id_fk", {})
