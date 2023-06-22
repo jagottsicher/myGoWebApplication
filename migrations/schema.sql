@@ -314,6 +314,37 @@ CREATE UNIQUE INDEX schema_migration_version_idx ON public.schema_migration USIN
 
 
 --
+-- Name: users_email_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX users_email_idx ON public.users USING btree (email);
+
+
+--
+-- Name: bungalow_restrictions bungalow_restrictions_bungalows_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bungalow_restrictions
+    ADD CONSTRAINT bungalow_restrictions_bungalows_id_fk FOREIGN KEY (bungalow_id) REFERENCES public.bungalows(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bungalow_restrictions bungalow_restrictions_reservations_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bungalow_restrictions
+    ADD CONSTRAINT bungalow_restrictions_reservations_id_fk FOREIGN KEY (reservation_id) REFERENCES public.reservations(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bungalow_restrictions bungalow_restrictions_restrictions_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bungalow_restrictions
+    ADD CONSTRAINT bungalow_restrictions_restrictions_id_fk FOREIGN KEY (restriction_id) REFERENCES public.restrictions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: reservations reservations_bungalows_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 

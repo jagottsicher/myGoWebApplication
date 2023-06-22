@@ -1,0 +1,3 @@
+drop_index("bungalow_restrictions", "bungalow_restrictions_start_date_end_date_idx")
+drop_index("bungalow_restrictions", "bungalow_restrictions_reservation_id_idx")
+drop_index("bungalow_restrictions", "bungalow_restrictions_bungalow_id_idx")

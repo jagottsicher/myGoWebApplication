@@ -1,0 +1,3 @@
+add_index("bungalow_restrictions", ["start_date", "end_date"], {})
+add_index("bungalow_restrictions", "bungalow_id", {})
+add_index("bungalow_restrictions", "reservation_id", {})
