@@ -6,24 +6,29 @@ import (
 	"net/http"
 
 	"github.com/jagottsicher/myGoWebApplication/internal/config"
+	"github.com/jagottsicher/myGoWebApplication/internal/driver"
 	"github.com/jagottsicher/myGoWebApplication/internal/forms"
 	"github.com/jagottsicher/myGoWebApplication/internal/helpers"
 	"github.com/jagottsicher/myGoWebApplication/internal/models"
 	"github.com/jagottsicher/myGoWebApplication/internal/render"
+	"github.com/jagottsicher/myGoWebApplication/internal/repository"
+	"github.com/jagottsicher/myGoWebApplication/internal/repository/dbrepo"
 )
 
 // Repository is the repository type
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 // Repo the repository used by the handlers
 var Repo *Repository
 
 // NewRepo creates a new repository
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 
@@ -34,6 +39,7 @@ func NewHandlers(r *Repository) {
 
 // Home is the handler for the home page
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	m.DB.AllUsers()
 	render.RenderTemplate(w, r, "home-page.tpml", &models.TemplateData{})
 }
 

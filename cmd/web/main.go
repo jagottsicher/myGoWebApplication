@@ -10,6 +10,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/jagottsicher/myGoWebApplication/internal/config"
+	"github.com/jagottsicher/myGoWebApplication/internal/driver"
 	"github.com/jagottsicher/myGoWebApplication/internal/handlers"
 	"github.com/jagottsicher/myGoWebApplication/internal/helpers"
 	"github.com/jagottsicher/myGoWebApplication/internal/models"
@@ -25,10 +26,12 @@ var errorLog *log.Logger
 
 // main is the main function
 func main() {
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	defer db.SQL.Close()
 
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
 
@@ -44,7 +47,7 @@ func main() {
 
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 	// Data to be available in the session
 	gob.Register(models.Reservation{})
 
@@ -65,20 +68,28 @@ func run() error {
 
 	app.Session = session
 
+	// connecting to database
+	log.Println("Connecting to database...")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=mygowebapp user=postgres password=")
+	if err != nil {
+		log.Fatal("No connection to database! Terminating ...")
+	}
+	log.Println("Successfully connected to database.")
+
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
-		return err
+		return nil, err
 	}
 
 	app.TemplateCache = tc
 	app.UseCache = false
 
-	repo := handlers.NewRepo(&app)
+	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandlers(repo)
 
 	render.NewTemplates(&app)
 
 	helpers.NewHelpers(&app)
-	return nil
+	return db, nil
 }
