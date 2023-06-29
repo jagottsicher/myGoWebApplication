@@ -2,13 +2,6 @@ package models
 
 import "time"
 
-// Reservation contains reservation data
-type Reservation struct {
-	Name  string
-	Email string
-	Phone string
-}
-
 // User is the model of user data
 type User struct {
 	ID        int
@@ -28,16 +21,16 @@ type Bungalow struct {
 	UdpadedAt    time.Time
 }
 
-// Restrictions is the model of a restriction
-type Restrictions struct {
+// Restriction is the model of a restriction
+type Restriction struct {
 	ID              int
 	RestrictionName string
 	CreatedAt       time.Time
 	UdpadedAt       time.Time
 }
 
-// Reservations is the model of a reservation
-type Reservations struct {
+// Reservation is the model of a reservation
+type Reservation struct {
 	ID         int
 	FullName   string
 	Email      string
@@ -51,8 +44,8 @@ type Reservations struct {
 	Processed  int
 }
 
-// BungalowRestrictions is a model of a bungalow restriction
-type BungalowRestrictions struct {
+// BungalowRestriction is a model of a bungalow restriction
+type BungalowRestriction struct {
 	ID            int
 	StartDate     time.Time
 	EndDate       time.Time
@@ -62,6 +55,6 @@ type BungalowRestrictions struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	Bungalow      Bungalow
-	Reservation   Reservations
-	Restriction   Restrictions
+	Reservation   Reservation
+	Restriction   Restriction
 }

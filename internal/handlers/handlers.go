@@ -39,38 +39,37 @@ func NewHandlers(r *Repository) {
 
 // Home is the handler for the home page
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	m.DB.AllUsers()
-	render.RenderTemplate(w, r, "home-page.tpml", &models.TemplateData{})
+	render.Template(w, r, "home-page.tpml", &models.TemplateData{})
 }
 
 // About is the handler for the about page
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "about-page.tpml", &models.TemplateData{})
+	render.Template(w, r, "about-page.tpml", &models.TemplateData{})
 }
 
 // Contact is the handler for the caontact page
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "contact-page.tpml", &models.TemplateData{})
+	render.Template(w, r, "contact-page.tpml", &models.TemplateData{})
 }
 
 // Eremite is the handler for the eremite page
 func (m *Repository) Eremite(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "eremite-page.tpml", &models.TemplateData{})
+	render.Template(w, r, "eremite-page.tpml", &models.TemplateData{})
 }
 
 // Couple is the handler for the couple page
 func (m *Repository) Couple(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "couple-page.tpml", &models.TemplateData{})
+	render.Template(w, r, "couple-page.tpml", &models.TemplateData{})
 }
 
 // Family is the handler for the family page
 func (m *Repository) Family(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "family-page.tpml", &models.TemplateData{})
+	render.Template(w, r, "family-page.tpml", &models.TemplateData{})
 }
 
 // Reservation is the handler for the reservation page
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "check-availability-page.tpml", &models.TemplateData{})
+	render.Template(w, r, "check-availability-page.tpml", &models.TemplateData{})
 }
 
 // PostReservation is the handler for the reservation page and POST requests
@@ -109,7 +108,7 @@ func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["reservation"] = emptyReservation
 
-	render.RenderTemplate(w, r, "make-reservation-page.tpml", &models.TemplateData{
+	render.Template(w, r, "make-reservation-page.tpml", &models.TemplateData{
 		Form: forms.New(nil),
 		Data: data,
 	})
@@ -124,9 +123,9 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 	}
 
 	reservation := models.Reservation{
-		Name:  r.Form.Get("full_name"),
-		Email: r.Form.Get("email"),
-		Phone: r.Form.Get("phone"),
+		FullName: r.Form.Get("full_name"),
+		Email:    r.Form.Get("email"),
+		Phone:    r.Form.Get("phone"),
 	}
 
 	form := forms.New(r.PostForm)
@@ -139,7 +138,7 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
 
-		render.RenderTemplate(w, r, "make-reservation-page.tpml", &models.TemplateData{
+		render.Template(w, r, "make-reservation-page.tpml", &models.TemplateData{
 			Form: form,
 			Data: data,
 		})
@@ -163,7 +162,7 @@ func (m *Repository) ReservationOverview(w http.ResponseWriter, r *http.Request)
 	data := make(map[string]interface{})
 	data["reservation"] = reservation
 
-	render.RenderTemplate(w, r, "reservation-overview-page.tpml", &models.TemplateData{
+	render.Template(w, r, "reservation-overview-page.tpml", &models.TemplateData{
 		Data: data,
 	})
 }

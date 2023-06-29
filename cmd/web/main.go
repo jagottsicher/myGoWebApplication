@@ -50,6 +50,10 @@ func main() {
 func run() (*driver.DB, error) {
 	// Data to be available in the session
 	gob.Register(models.Reservation{})
+	gob.Register(models.User{})
+	gob.Register(models.Bungalow{})
+	gob.Register(models.BungalowRestriction{})
+	gob.Register(models.Restriction{})
 
 	// don't forget to change to true in Production!
 	app.InProduction = false
@@ -88,7 +92,7 @@ func run() (*driver.DB, error) {
 	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandlers(repo)
 
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
 	helpers.NewHelpers(&app)
 	return db, nil
