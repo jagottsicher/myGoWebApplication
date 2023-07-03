@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/jagottsicher/myGoWebApplication/internal/config"
 	"github.com/jagottsicher/myGoWebApplication/internal/driver"
@@ -122,10 +124,40 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	sd := r.Form.Get("start_date")
+	ed := r.Form.Get("end_date")
+
+	// Date and Time in Go:
+	// 2023-12-31 -- 01/02 03:04:05PM '06 -0700 -- 12/31 03:04:05PM '23 -0700
+	// https://www.pauladamsmith.com/blog/2011/05/go_time.html
+
+	layout := "2006-01-02"
+
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	bungalowID, err := strconv.Atoi(r.Form.Get("bungalow_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
 	reservation := models.Reservation{
-		FullName: r.Form.Get("full_name"),
-		Email:    r.Form.Get("email"),
-		Phone:    r.Form.Get("phone"),
+		FullName:   r.Form.Get("full_name"),
+		Email:      r.Form.Get("email"),
+		Phone:      r.Form.Get("phone"),
+		StartDate:  startDate,
+		EndDate:    endDate,
+		BungalowID: bungalowID,
 	}
 
 	form := forms.New(r.PostForm)
@@ -142,6 +174,12 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 			Form: form,
 			Data: data,
 		})
+		return
+	}
+
+	err = m.DB.InsertReservation(reservation)
+	if err != nil {
+		helpers.ServerError(w, err)
 		return
 	}
 

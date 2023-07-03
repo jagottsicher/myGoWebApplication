@@ -17,7 +17,7 @@
                   <label class="text-danger">{{.}}</label>
                   {{end}}
                   <input class="form-control {{with .Form.Errors.Get "full_name"}}is-invalid{{end}}" 
-                  id="full_name" autocomplete="off" type="text" name="full_name" value="{{$res.Name}}" required>
+                  id="full_name" autocomplete="off" type="text" name="full_name" value="{{$res.FullName}}" required>
               </div>
 
               <div class="form-group mt-3">
