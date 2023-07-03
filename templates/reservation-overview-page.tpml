@@ -16,7 +16,7 @@
                 <tbody>
                     <tr>
                         <td>Name:</td>
-                        <td>{{$res.Name}}</td>
+                        <td>{{$res.FullName}}</td>
                     </tr>
                     <tr>
                         <td>Arrival:</td>

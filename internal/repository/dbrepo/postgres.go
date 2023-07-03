@@ -18,7 +18,7 @@ func (m *postgresDBRepo) InsertReservation(res models.Reservation) error {
 
 	stmt := `
 		insert into reservations 
-			(full_name, email, phone, start_date, end_date, bunglaow_id, created_at, updated_at)
+			(full_name, email, phone, start_date, end_date, bungalow_id, created_at, updated_at)
 		values
 			($1, $2, $3, $4, $5, $6, $7, $8)
 	`

@@ -21,6 +21,20 @@
               </div>
 
               <div class="form-group mt-3">
+                <label for="start_date">Start Date</label>
+                <input class="form-control" id="start_date" type="text" name="start_date">
+            </div>
+        
+            <div class="form-group mt-3">
+                <label for="end_date">End Date</label>
+                <input class="form-control" id="end_date" type="text" name="end_date">
+            </div>
+        
+            <div class="form-group mt-3">
+                <input id="bungalow_id" type="hidden" name ="bungalow_id" value="1">
+            </div>        
+
+              <div class="form-group mt-3">
                   <label for="email">Email:</label>
                   {{with .Form.Errors.Get "email"}}
                   <label class="text-danger">{{.}}</label>
