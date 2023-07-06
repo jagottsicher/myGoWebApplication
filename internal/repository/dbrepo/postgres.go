@@ -104,3 +104,51 @@ func (m *postgresDBRepo) SearchAvailabilityByDatesByBungalowID(start, end time.T
 
 	return false, nil
 }
+
+// SearchAvailabilityByDatesForAllBungalows returns a slice of available bungalows, if any for a queried date range
+func (m *postgresDBRepo) SearchAvailabilityByDatesForAllBungalows(start, end time.Time) ([]models.Bungalow, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var bungalows []models.Bungalow
+
+	query := `
+		select 
+			b.id, b.bungalow_name
+		from
+			bungalows b 
+		where b.id not in 
+			(select 
+				bungalow_id
+			from
+				bungalow_restrictions br
+			where 
+			$1 < br.end_date and $2 > br.start_date
+			);
+	`
+
+	rows, err := m.DB.QueryContext(ctx, query, start, end)
+	if err != nil {
+		return bungalows, err
+	}
+
+	for rows.Next() {
+		var bungalow models.Bungalow
+		err := rows.Scan(
+			bungalow.ID,
+			bungalow.BungalowName,
+		)
+		if err != nil {
+			return bungalows, err
+		}
+
+		bungalows = append(bungalows, bungalow)
+	}
+
+	if err = rows.Err(); err != nil {
+		return bungalows, err
+	}
+
+	return bungalows, nil
+}
