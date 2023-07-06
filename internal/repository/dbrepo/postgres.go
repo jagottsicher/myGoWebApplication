@@ -72,5 +72,35 @@ func (m *postgresDBRepo) InsertBungalowRestriction(r models.BungalowRestriction)
 	}
 
 	return nil
+}
 
+// SearchAvailabilityByDatesByBungalowID returns true if there is availablity for a bungalowID for a date range, false if not
+func (m *postgresDBRepo) SearchAvailabilityByDatesByBungalowID(start, end time.Time, bungalowID int) (bool, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var numRows int
+
+	query := `
+		select 
+			count(id)
+		from
+			bungalow_restrictions
+		where
+			bungalow_id = $1
+			$2 < end_date and $3 > start_date;
+	`
+
+	row := m.DB.QueryRowContext(ctx, query, bungalowID, start, end)
+	err := row.Scan(&numRows)
+	if err != nil {
+		return false, err
+	}
+
+	if numRows == 0 {
+		return true, nil
+	}
+
+	return false, nil
 }
