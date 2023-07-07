@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jagottsicher/myGoWebApplication/internal/config"
@@ -78,7 +78,47 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	start := r.Form.Get("startingDate")
 	end := r.Form.Get("endingDate")
-	w.Write([]byte(fmt.Sprintf("Arrival date value is set to %s, departure date value to %s", start, end)))
+
+	layout := "2006-01-02"
+
+	startDate, err := time.Parse(layout, start)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	endDate, err := time.Parse(layout, end)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	bungalows, err := m.DB.SearchAvailabilityByDatesForAllBungalows(startDate, endDate)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	if len(bungalows) == 0 {
+		m.App.Session.Put(r.Context(), "error", ":( No holiday home is available at that time.")
+		http.Redirect(w, r, "/reservation", http.StatusSeeOther)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["bungalows"] = bungalows
+
+	res := models.Reservation{
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+
+	m.App.Session.Put(r.Context(), "reservation", res)
+
+	render.Template(w, r, "choose-bungalow-page.tpml", &models.TemplateData{
+		Data: data,
+	})
+
 }
 
 type jsonResponse struct {
@@ -105,14 +145,39 @@ func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
 
 // MakeReservation is the handler for the make-reservation page
 func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
-	var emptyReservation models.Reservation
+
+	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		m.App.Session.Put(r.Context(), "error", "Cannot get reservation back from session")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	bungalow, err := m.DB.GetBungalowByID(res.BungalowID)
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "Cannot find bungalow!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	res.Bungalow.BungalowName = bungalow.BungalowName
+
+	m.App.Session.Put(r.Context(), "reservation", res)
+
+	sd := res.StartDate.Format("2006-01-02")
+	ed := res.EndDate.Format("2006-01-02")
+
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = sd
+	stringMap["end_date"] = ed
 
 	data := make(map[string]interface{})
-	data["reservation"] = emptyReservation
+	data["reservation"] = res
 
 	render.Template(w, r, "make-reservation-page.tpml", &models.TemplateData{
-		Form: forms.New(nil),
-		Data: data,
+		Form:      forms.New(nil),
+		Data:      data,
+		StringMap: stringMap,
 	})
 }
 
@@ -217,4 +282,29 @@ func (m *Repository) ReservationOverview(w http.ResponseWriter, r *http.Request)
 	render.Template(w, r, "reservation-overview-page.tpml", &models.TemplateData{
 		Data: data,
 	})
+}
+
+// ChooseBungalow displays list of available bungalows and lets the user choose a bungalow
+func (m *Repository) ChooseBungalow(w http.ResponseWriter, r *http.Request) {
+
+	exploded := strings.Split(r.RequestURI, "/")
+	bungalowID, err := strconv.Atoi(exploded[2])
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "Missing parameter from URL")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		m.App.Session.Put(r.Context(), "error", "Cannot get reservation back from session")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	res.BungalowID = bungalowID
+
+	m.App.Session.Put(r.Context(), "reservation", res)
+
+	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
 }

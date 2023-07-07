@@ -10,7 +10,7 @@ type User struct {
 	Password  string
 	Role      int
 	CreatedAt time.Time
-	UdpadedAt time.Time
+	UpdatedAt time.Time
 }
 
 // Bungalow is the model of bungalow data
@@ -18,7 +18,7 @@ type Bungalow struct {
 	ID           int
 	BungalowName string
 	CreatedAt    time.Time
-	UdpadedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 // Restriction is the model of a restriction
@@ -26,7 +26,7 @@ type Restriction struct {
 	ID              int
 	RestrictionName string
 	CreatedAt       time.Time
-	UdpadedAt       time.Time
+	UpdatedAt       time.Time
 }
 
 // Reservation is the model of a reservation
@@ -39,7 +39,7 @@ type Reservation struct {
 	EndDate    time.Time
 	BungalowID int
 	CreatedAt  time.Time
-	UdpadedAt  time.Time
+	UpdatedAt  time.Time
 	Bungalow   Bungalow
 	Processed  int
 }

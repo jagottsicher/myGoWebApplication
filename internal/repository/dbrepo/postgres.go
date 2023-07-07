@@ -136,8 +136,8 @@ func (m *postgresDBRepo) SearchAvailabilityByDatesForAllBungalows(start, end tim
 	for rows.Next() {
 		var bungalow models.Bungalow
 		err := rows.Scan(
-			bungalow.ID,
-			bungalow.BungalowName,
+			&bungalow.ID,
+			&bungalow.BungalowName,
 		)
 		if err != nil {
 			return bungalows, err
@@ -151,4 +151,36 @@ func (m *postgresDBRepo) SearchAvailabilityByDatesForAllBungalows(start, end tim
 	}
 
 	return bungalows, nil
+}
+
+// GetBungalowByID gets a bungalow by id
+func (m *postgresDBRepo) GetBungalowByID(id int) (models.Bungalow, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var bungalow models.Bungalow
+
+	query := `
+	select 
+		id, bungalow_name, created_at, updated_at
+	from
+		bungalows
+	where
+		id = $1
+	`
+
+	row := m.DB.QueryRowContext(ctx, query, id)
+	err := row.Scan(
+		&bungalow.ID,
+		&bungalow.BungalowName,
+		&bungalow.CreatedAt,
+		&bungalow.UpdatedAt,
+	)
+
+	if err != nil {
+		return bungalow, err
+	}
+
+	return bungalow, nil
 }

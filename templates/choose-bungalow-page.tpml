@@ -1,0 +1,21 @@
+{{template "base" .}}
+
+{{define "content"}}
+<div class="container mt-5">
+
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center">Choose Your Holiday Home</h1>
+            <p>The following holiday homes are available for the requested time:</p>
+
+            {{$bungalows := index .Data "bungalows"}}
+
+            <ul>
+                {{range $bungalows}}
+                    <li><a href="/choose-bungalow/{{.ID}}">{{.BungalowName}}</a></li>
+                {{end}}
+            </ul>
+        </div>
+    </div>
+</div>
+{{end}}
