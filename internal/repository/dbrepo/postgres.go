@@ -85,11 +85,11 @@ func (m *postgresDBRepo) SearchAvailabilityByDatesByBungalowID(start, end time.T
 	query := `
 		select 
 			count(id)
-		from
+		fromw
 			bungalow_restrictions
 		where
 			bungalow_id = $1
-			$2 < end_date and $3 > start_date;
+			$2 <= end_date and $3 >= start_date;
 	`
 
 	row := m.DB.QueryRowContext(ctx, query, bungalowID, start, end)
@@ -124,7 +124,7 @@ func (m *postgresDBRepo) SearchAvailabilityByDatesForAllBungalows(start, end tim
 			from
 				bungalow_restrictions br
 			where 
-			$1 < br.end_date and $2 > br.start_date
+			$1 <= br.end_date and $2 >= br.start_date
 			);
 	`
 

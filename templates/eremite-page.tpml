@@ -65,6 +65,7 @@
         const elem = document.getElementById("reservation-dates-modal");
         const rp = new DateRangePicker(elem, {
           format: 'yyyy-mm-dd',
+          minDate: new Date(),
           showOnFocus: true,
         })
       },

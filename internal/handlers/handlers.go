@@ -268,19 +268,38 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 
 // ReservationOverview displays the reservation summary page
 func (m *Repository) ReservationOverview(w http.ResponseWriter, r *http.Request) {
-	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+
+	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
-		m.App.ErrorLog.Println("Could not get item from session.")
-		m.App.Session.Put(r.Context(), "error", "No reservation data in this session available.")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		m.App.Session.Put(r.Context(), "error", "Cannot get reservation back from session")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
+	m.App.Session.Remove(r.Context(), "reservation")
+
+	bungalow, err := m.DB.GetBungalowByID(res.BungalowID)
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "Cannot find bungalow!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	res.Bungalow.BungalowName = bungalow.BungalowName
+
 	data := make(map[string]interface{})
-	data["reservation"] = reservation
+	data["reservation"] = res
+
+	sd := res.StartDate.Format("2006-01-02")
+	ed := res.EndDate.Format("2006-01-02")
+
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = sd
+	stringMap["end_date"] = ed
 
 	render.Template(w, r, "reservation-overview-page.tpml", &models.TemplateData{
-		Data: data,
+		Data:      data,
+		StringMap: stringMap,
 	})
 }
 
