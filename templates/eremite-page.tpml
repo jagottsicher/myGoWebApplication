@@ -88,9 +88,23 @@
         .then(response => response.json())
         .then (data => {
           if (data.ok) {
-            console.log("Available.")
+            attention.custom({
+              icon: 'success',
+              showConfirmButton: false,
+              msg: '<p>The bungalow is available!</p>'
+              + '<p><a href="/book-bungalow?id='
+              + data.bungalow_id
+              + '&s='
+              + data.start_date
+              + '&e='
+              + data.end_date
+              + '" class="btn btn-primary">'
+              + 'Book Now!</a></p>'
+            })
           } else {
-            console.log("NOT Available.")
+            attention.error({
+              msg: ":( This holiday home is not available at that time.",
+            })
           }
         })
       }

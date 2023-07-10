@@ -122,8 +122,11 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 }
 
 type jsonResponse struct {
-	OK      bool   `json:"ok"`
-	Message string `json:"message"`
+	OK         bool   `json:"ok"`
+	Message    string `json:"message"`
+	BungalowID string `json:"bungalow_id"`
+	StartDate  string `json:"start_date"`
+	EndDate    string `json:"end_date"`
 }
 
 // ReservationJSON is the handler for reservation-json and returns JSON
@@ -173,8 +176,11 @@ func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := jsonResponse{
-		OK:      available,
-		Message: "",
+		OK:         available,
+		Message:    "",
+		StartDate:  sd,
+		EndDate:    ed,
+		BungalowID: strconv.Itoa(bungalowID),
 	}
 
 	output, err := json.MarshalIndent(resp, "", "    ")
