@@ -128,15 +128,58 @@ type jsonResponse struct {
 
 // ReservationJSON is the handler for reservation-json and returns JSON
 func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
+
+	bungalowID, err := strconv.Atoi(r.Form.Get("bungalow_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	sd := r.Form.Get("start")
+	ed := r.Form.Get("end")
+
+	layout := "2006-01-02"
+
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	available, err := m.DB.SearchAvailabilityByDatesByBungalowID(startDate, endDate, bungalowID)
+	if err != nil {
+		helpers.ServerError(w, err)
+		resp := jsonResponse{
+			OK:      false,
+			Message: "Error querying database",
+		}
+
+		output, err := json.MarshalIndent(resp, "", "    ")
+		if err != nil {
+			helpers.ServerError(w, err)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(output)
+
+		return
+	}
+
 	resp := jsonResponse{
-		OK:      false,
-		Message: "It's available!",
+		OK:      available,
+		Message: "",
 	}
 
 	output, err := json.MarshalIndent(resp, "", "    ")
 	if err != nil {
 		helpers.ServerError(w, err)
-		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
