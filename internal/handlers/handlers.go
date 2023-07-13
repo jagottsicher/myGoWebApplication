@@ -376,3 +376,36 @@ func (m *Repository) ChooseBungalow(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
 }
+
+// BookBungalow takes URL parameters from get request,
+// builds a reservation, stores it in a session,
+// and redirects to make-reservation page
+func (m *Repository) BookBungalow(w http.ResponseWriter, r *http.Request) {
+
+	bungalowID, _ := strconv.Atoi(r.URL.Query().Get("id"))
+
+	sd := r.URL.Query().Get("s")
+	ed := r.URL.Query().Get("e")
+
+	layout := "2006-01-02"
+	startDate, _ := time.Parse(layout, sd)
+	endDate, _ := time.Parse(layout, ed)
+
+	var res models.Reservation
+
+	bungalow, err := m.DB.GetBungalowByID(bungalowID)
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "Cannot find bungalow!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	res.Bungalow.BungalowName = bungalow.BungalowName
+	res.BungalowID = bungalowID
+	res.StartDate = startDate
+	res.EndDate = endDate
+
+	m.App.Session.Put(r.Context(), "reservation", res)
+
+	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
+}
