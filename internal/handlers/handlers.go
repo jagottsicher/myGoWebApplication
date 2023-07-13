@@ -377,9 +377,8 @@ func (m *Repository) ChooseBungalow(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
 }
 
-// BookBungalow takes URL parameters from get request,
-// builds a reservation, stores it in a session,
-// and redirects to make-reservation page
+// BookBungalow takes URL parameters from get request, builds a reservation,
+// stores it in a session, and redirects to make-reservation page
 func (m *Repository) BookBungalow(w http.ResponseWriter, r *http.Request) {
 
 	bungalowID, _ := strconv.Atoi(r.URL.Query().Get("id"))
