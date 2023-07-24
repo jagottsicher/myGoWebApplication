@@ -143,6 +143,22 @@ type jsonResponse struct {
 // ReservationJSON is the handler for reservation-json and returns JSON
 func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
 
+	// parse request body
+	err := r.ParseForm()
+	if err != nil {
+		// can't parse form, so return appropriate json
+		resp := jsonResponse{
+			OK:      false,
+			Message: "Internal server error",
+		}
+
+		output, _ := json.MarshalIndent(resp, "", "    ")
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(output)
+		return
+	}
+
 	bungalowID, err := strconv.Atoi(r.Form.Get("bungalow_id"))
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "can't get data from form")

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -298,6 +299,35 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	if rr.Code != http.StatusTemporaryRedirect {
 		t.Errorf("PostMakeReservation handler failed when trying to inserting a reservation into the database: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
+	}
+
+}
+
+// TestRepository_ReservationJSON tests the ReservationJSON POST-request handler
+func TestRepository_ReservationJSON(t *testing.T) {
+	reqBody := "start=2037-01-01"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2037-01-02")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
+
+	req, _ := http.NewRequest("POST", "/reservation-json", strings.NewReader(reqBody))
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(Repo.ReservationJSON)
+
+	handler.ServeHTTP(rr, req)
+
+	// since we have no bungalows available, we expect to get status http.StatusSeeOther
+
+	// this time we want to parse JSON and get the expected response1
+	var j jsonResponse
+	err := json.Unmarshal([]byte(rr.Body.String()), &j)
+	if err != nil {
+		t.Error("can't parse json")
 	}
 
 }
