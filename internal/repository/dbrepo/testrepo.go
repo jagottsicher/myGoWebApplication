@@ -1,6 +1,7 @@
 package dbrepo
 
 import (
+	"errors"
 	"time"
 
 	"github.com/jagottsicher/myGoWebApplication/internal/models"
@@ -12,11 +13,19 @@ func (m *testDBRepo) AllUsers() bool {
 
 // InsertReservation stores a reservation in the database
 func (m *testDBRepo) InsertReservation(res models.Reservation) (int, error) {
+	if res.BungalowID == 99 {
+		return 0, errors.New("some error")
+	}
+
 	return 1, nil
 }
 
 // InsertBungalowRestriction places a restriction in the database
 func (m *testDBRepo) InsertBungalowRestriction(r models.BungalowRestriction) error {
+	if r.BungalowID == 999 {
+		return errors.New("just because")
+	}
+
 	return nil
 }
 
@@ -35,6 +44,9 @@ func (m *testDBRepo) SearchAvailabilityByDatesForAllBungalows(start, end time.Ti
 // GetBungalowByID gets a bungalow by id
 func (m *testDBRepo) GetBungalowByID(id int) (models.Bungalow, error) {
 	var bungalow models.Bungalow
+	if id > 3 {
+		return bungalow, errors.New("an error occured")
+	}
 
 	return bungalow, nil
 }

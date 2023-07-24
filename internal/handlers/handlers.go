@@ -215,14 +215,14 @@ func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 		// helpers.ServerError(w, errors.New("cannot get reservation back from session"))
 		// return
 		m.App.Session.Put(r.Context(), "error", "Cannot get reservation back from session")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
 	bungalow, err := m.DB.GetBungalowByID(res.BungalowID)
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "Cannot find bungalow!")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -251,8 +251,8 @@ func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "can't get data from form")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		m.App.Session.Put(r.Context(), "error", "can't parse form")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -267,22 +267,22 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 
 	startDate, err := time.Parse(layout, sd)
 	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "can't get data from form")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		m.App.Session.Put(r.Context(), "error", "can't parse arrival date")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
 	endDate, err := time.Parse(layout, ed)
 	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "can't get data from form")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		m.App.Session.Put(r.Context(), "error", "can't parse departurte date")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
 	bungalowID, err := strconv.Atoi(r.Form.Get("bungalow_id"))
 	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "can't get data from form")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		m.App.Session.Put(r.Context(), "error", "can't parse bungalow id")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -304,7 +304,7 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
-
+		http.Error(w, "my own error message", http.StatusSeeOther)
 		render.Template(w, r, "make-reservation-page.tpml", &models.TemplateData{
 			Form: form,
 			Data: data,
@@ -315,7 +315,7 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 	newReservationID, err := m.DB.InsertReservation(reservation)
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "can't write reservation to database")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -330,7 +330,7 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 	err = m.DB.InsertBungalowRestriction(restriction)
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "can't reserve bungalow in database")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
