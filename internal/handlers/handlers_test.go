@@ -3,10 +3,10 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"reflect"
 	"strings"
 	"testing"
@@ -75,11 +75,12 @@ func TestRepository_PostReservation(t *testing.T) {
 	// case #1: bungalows are not available
 
 	// create request body
-	reqBody := "start=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2037-01-02")
+	postedData := url.Values{}
+	postedData.Add("start", "2037-01-01")
+	postedData.Add("end", "2037-01-02")
 
 	// create  request
-	req, _ := http.NewRequest("POST", "/reservation", strings.NewReader(reqBody))
+	req, _ := http.NewRequest("POST", "/reservation", strings.NewReader(postedData.Encode()))
 
 	// get the context
 	ctx := getCtx(req)
@@ -106,11 +107,12 @@ func TestRepository_PostReservation(t *testing.T) {
 
 	// this time, we specify a start date before 2040-01-01, which will give us
 	// a non-empty slice, indicating that bungalows are available
-	reqBody = "start=2036-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2036-01-02")
+	postedData = url.Values{}
+	postedData.Add("start", "2036-01-01")
+	postedData.Add("end", "2036-01-02")
 
-	// create  request
-	req, _ = http.NewRequest("POST", "/reservation", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/reservation", strings.NewReader(postedData.Encode()))
 
 	// get the context
 	ctx = getCtx(req)
@@ -162,9 +164,12 @@ func TestRepository_PostReservation(t *testing.T) {
 	// case #4: start date in wrong format
 
 	// start date in wrong format
-	reqBody = "start=invalid"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2040-01-02")
-	req, _ = http.NewRequest("POST", "/reservation", strings.NewReader(reqBody))
+	postedData = url.Values{}
+	postedData.Add("start", "invalid")
+	postedData.Add("end", "2037-01-02")
+
+	// create request
+	req, _ = http.NewRequest("POST", "/reservation", strings.NewReader(postedData.Encode()))
 
 	// get the context
 	ctx = getCtx(req)
@@ -190,9 +195,12 @@ func TestRepository_PostReservation(t *testing.T) {
 	// case #5: end date in wrong format
 
 	// end date in wrong format
-	reqBody = "start=2040-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=invalid")
-	req, _ = http.NewRequest("POST", "/reservation", strings.NewReader(reqBody))
+	postedData = url.Values{}
+	postedData.Add("start", "2037-01-01")
+	postedData.Add("end", "invalid")
+
+	// create request
+	req, _ = http.NewRequest("POST", "/reservation", strings.NewReader(postedData.Encode()))
 
 	// get the context
 	ctx = getCtx(req)
@@ -218,9 +226,12 @@ func TestRepository_PostReservation(t *testing.T) {
 	// case #6: database query fails
 
 	// start date of 2038-01-01, expects testdb repo to return an error
-	reqBody = "start=2038-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2038-01-02")
-	req, _ = http.NewRequest("POST", "/reservation", strings.NewReader(reqBody))
+	postedData = url.Values{}
+	postedData.Add("start", "2038-01-01")
+	postedData.Add("end", "2038-01-02")
+
+	// create request
+	req, _ = http.NewRequest("POST", "/reservation", strings.NewReader(postedData.Encode()))
 
 	// get the context
 	ctx = getCtx(req)
@@ -283,6 +294,8 @@ func TestRepository_MakeReservation(t *testing.T) {
 	// case #2: without a reservation in session (reset everything)
 
 	req, _ = http.NewRequest("GET", "/make-reservation", nil)
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 	rr = httptest.NewRecorder()
@@ -295,6 +308,8 @@ func TestRepository_MakeReservation(t *testing.T) {
 	// case #3: test error returned from database query function
 
 	req, _ = http.NewRequest("GET", "/make-reservation", nil)
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 	rr = httptest.NewRecorder()
@@ -313,14 +328,15 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	// case #1: reservation works fine
 
-	reqBody := "start_date=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=2037-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "full_name=Peter Griffin")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=peter@griffin.family")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=1234567890")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
+	postedData := url.Values{}
+	postedData.Add("start_date", "2037-01-01")
+	postedData.Add("end_date", "2037-01-02")
+	postedData.Add("full_name", "Peter Griffin")
+	postedData.Add("email", "john@smith.com")
+	postedData.Add("phone", "1234567890")
+	postedData.Add("bungalow_id", "1")
 
-	req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
 
 	ctx := getCtx(req)
 	req = req.WithContext(ctx)
@@ -339,7 +355,10 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	// case #2: missing post body
 
+	// create request
 	req, _ = http.NewRequest("POST", "/make-reservation", nil)
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -357,14 +376,18 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	// case #3: invalid start date
 
-	reqBody = "start_date=invalid"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=2037-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "full_name=Peter Griffin")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=peter@griffin.family")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=1234567890")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
+	postedData = url.Values{}
+	postedData.Add("start_date", "invalid")
+	postedData.Add("end_date", "2037-01-02")
+	postedData.Add("full_name", "Peter Griffin")
+	postedData.Add("email", "john@smith.com")
+	postedData.Add("phone", "1234567890")
+	postedData.Add("bungalow_id", "1")
 
-	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -382,14 +405,18 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	// case #4: invalid end date
 
-	reqBody = "start_date=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=invalid")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "full_name=Peter Griffin")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=peter@griffin.family")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=1234567890")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
+	postedData = url.Values{}
+	postedData.Add("start_date", "2037-01-01")
+	postedData.Add("end_date", "invalid")
+	postedData.Add("full_name", "Peter Griffin")
+	postedData.Add("email", "peter@griffin.family")
+	postedData.Add("phone", "1234567890")
+	postedData.Add("bungalow_id", "1")
 
-	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -407,14 +434,18 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	// case #5: invalid bungalow id
 
-	reqBody = "start_date=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=2037-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "full_name=Peter Griffin")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=peter@griffin.family")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=1234567890")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=invalid")
+	postedData = url.Values{}
+	postedData.Add("start_date", "2037-01-01")
+	postedData.Add("end_date", "2037-01-02")
+	postedData.Add("full_name", "Peter Griffin")
+	postedData.Add("email", "peter@griffin.family")
+	postedData.Add("phone", "1234567890")
+	postedData.Add("bungalow_id", "invalid")
 
-	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -432,14 +463,18 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	// case #6: invalid/insufficient data
 
-	reqBody = "start_date=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=2037-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "full_name=P")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=peter@griffin.family")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=1234567890")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
+	postedData = url.Values{}
+	postedData.Add("start_date", "2037-01-01")
+	postedData.Add("end_date", "2037-01-02")
+	postedData.Add("full_name", "P")
+	postedData.Add("email", "peter@griffin.family")
+	postedData.Add("phone", "1234567890")
+	postedData.Add("bungalow_id", "1")
 
-	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -457,14 +492,18 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	// case #7:  failure inserting reservation into database
 
-	reqBody = "start_date=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=2037-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "full_name=Peter Griffin")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=peter@griffin.family")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=1234567890")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=99")
+	postedData = url.Values{}
+	postedData.Add("start_date", "2037-01-01")
+	postedData.Add("end_date", "2037-01-02")
+	postedData.Add("full_name", "Peter Griffin")
+	postedData.Add("email", "peter@griffin.family")
+	postedData.Add("phone", "1234567890")
+	postedData.Add("bungalow_id", "99")
 
-	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -482,14 +521,18 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	// case #8: failure to inserting restriction into database
 
-	reqBody = "start_date=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=2037-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "full_name=Peter Griffin")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=peter@griffin.family")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=1234567890")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=999")
+	postedData = url.Values{}
+	postedData.Add("start_date", "2037-01-01")
+	postedData.Add("end_date", "2037-01-02")
+	postedData.Add("full_name", "Peter Griffin")
+	postedData.Add("email", "peter@griffin.family")
+	postedData.Add("phone", "1234567890")
+	postedData.Add("bungalow_id", "999")
 
-	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -512,11 +555,13 @@ func TestRepository_ReservationJSON(t *testing.T) {
 
 	// case #1: bungalow ID invalid
 
-	reqBody := "start=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2037-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=invalid")
+	postedData := url.Values{}
+	postedData.Add("start", "2037-01-01")
+	postedData.Add("end", "2037-01-02")
+	postedData.Add("bungalow_id", "invalid")
 
-	req, _ := http.NewRequest("POST", "/reservation-json", strings.NewReader(reqBody))
+	// create request
+	req, _ := http.NewRequest("POST", "/reservation-json", strings.NewReader(postedData.Encode()))
 	ctx := getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -534,11 +579,15 @@ func TestRepository_ReservationJSON(t *testing.T) {
 
 	// case #2: start date invalid
 
-	reqBody = "start=invalid"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2037-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
+	postedData = url.Values{}
+	postedData.Add("start", "invalid")
+	postedData.Add("end", "2037-01-02")
+	postedData.Add("bungalow_id", "1")
 
-	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(postedData.Encode()))
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -556,11 +605,15 @@ func TestRepository_ReservationJSON(t *testing.T) {
 
 	// case #3: end date invalid
 
-	reqBody = "start=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=invalid")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
+	postedData = url.Values{}
+	postedData.Add("start", "2037-01-01")
+	postedData.Add("end", "invalid")
+	postedData.Add("bungalow_id", "1")
 
-	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(postedData.Encode()))
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -576,13 +629,17 @@ func TestRepository_ReservationJSON(t *testing.T) {
 		t.Errorf("ReservationJSON handler unexpectedly seems able parsing invalid end date: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
 	}
 
-	// case #4: bungalows not available
+	// case #4: bungalow not available
 
-	reqBody = "start=2037-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2037-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
+	postedData = url.Values{}
+	postedData.Add("start", "2037-01-01")
+	postedData.Add("end", "2037-01-02")
+	postedData.Add("bungalow_id", "1")
 
-	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(reqBody))
+	// create request
+	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(postedData.Encode()))
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -607,15 +664,16 @@ func TestRepository_ReservationJSON(t *testing.T) {
 		t.Error("got availability, unexpected none")
 	}
 
-	// case #5: bungalows available
+	// case #5: bungalow available
 
 	// create request body
-	reqBody = "start=2036-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2036-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
+	postedData = url.Values{}
+	postedData.Add("start", "2036-01-01")
+	postedData.Add("end", "2036-01-02")
+	postedData.Add("bungalow_id", "1")
 
 	// create  request
-	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(reqBody))
+	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(postedData.Encode()))
 
 	// get the context
 	ctx = getCtx(req)
@@ -679,10 +737,13 @@ func TestRepository_ReservationJSON(t *testing.T) {
 	// case #7: database error
 
 	// create request body
-	reqBody = "start=2038-01-01"
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "end=2038-01-02")
-	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
-	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(reqBody))
+	postedData = url.Values{}
+	postedData.Add("start", "2038-01-01")
+	postedData.Add("end", "2038-01-02")
+	postedData.Add("bungalow_id", "1")
+
+	// create request
+	req, _ = http.NewRequest("POST", "/reservation-json", strings.NewReader(postedData.Encode()))
 
 	// get the context
 	ctx = getCtx(req)
@@ -751,6 +812,8 @@ func TestRepository_ReservationOverview(t *testing.T) {
 	}
 
 	req, _ = http.NewRequest("GET", "/reservation-overview", nil)
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -768,6 +831,8 @@ func TestRepository_ReservationOverview(t *testing.T) {
 	// case #3: reservation not in session
 
 	req, _ = http.NewRequest("GET", "/reservation-overview", nil)
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -816,6 +881,8 @@ func TestRepository_ChooseBungalow(t *testing.T) {
 	// case #2: reservation not in session
 
 	req, _ = http.NewRequest("GET", "/choose-bungalow/1", nil)
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 	req.RequestURI = "/choose-bungalow/1"
@@ -833,8 +900,11 @@ func TestRepository_ChooseBungalow(t *testing.T) {
 	// case #3: missing url parameter, or malformed parameter
 
 	req, _ = http.NewRequest("GET", "/choose-bungalow/fish", nil)
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
+
 	req.RequestURI = "/choose-bungalow/fish"
 
 	rr = httptest.NewRecorder()
@@ -879,6 +949,8 @@ func TestRepository_BookBungalow(t *testing.T) {
 	// case #2: database failed
 
 	req, _ = http.NewRequest("GET", "/book-bungalow?s=2036-01-01&e=2036-01-02&id=99", nil)
+
+	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
