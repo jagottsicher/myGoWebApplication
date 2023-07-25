@@ -322,7 +322,10 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
-		http.Error(w, "my own error message", http.StatusSeeOther)
+
+		// needed to be commented out because was needed for tests only
+		// http.Error(w, "my own error message", http.StatusSeeOther)
+
 		render.Template(w, r, "make-reservation-page.tpml", &models.TemplateData{
 			Form: form,
 			Data: data,

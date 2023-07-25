@@ -486,8 +486,8 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 
 	handler.ServeHTTP(rr, req)
 
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("PostMakeReservation handler returned wrong response code for invalid bungalow id: got %d, wanted %d", rr.Code, http.StatusSeeOther)
+	if rr.Result().StatusCode != http.StatusOK {
+		t.Errorf("PostMakeReservation handler returned wrong response code for invalid bungalow id: got %d, wanted %d", rr.Code, http.StatusOK)
 	}
 
 	// case #7:  failure inserting reservation into database
