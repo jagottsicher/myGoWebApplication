@@ -321,6 +321,7 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 	reqBody = fmt.Sprintf("%s&%s", reqBody, "bungalow_id=1")
 
 	req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+
 	ctx := getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -877,7 +878,7 @@ func TestRepository_BookBungalow(t *testing.T) {
 
 	// case #2: database failed
 
-	req, _ = http.NewRequest("GET", "/book-bungalow?s=2036-01-01&e=2036-01-02&id=99r", nil)
+	req, _ = http.NewRequest("GET", "/book-bungalow?s=2036-01-01&e=2036-01-02&id=99", nil)
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
