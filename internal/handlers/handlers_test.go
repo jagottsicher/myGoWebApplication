@@ -8,8 +8,10 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/jagottsicher/myGoWebApplication/internal/driver"
 	"github.com/jagottsicher/myGoWebApplication/internal/models"
@@ -329,17 +331,31 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 	// case #1: reservation works fine
 
 	postedData := url.Values{}
-	postedData.Add("start_date", "2037-01-01")
-	postedData.Add("end_date", "2037-01-02")
 	postedData.Add("full_name", "Peter Griffin")
-	postedData.Add("email", "john@smith.com")
+	postedData.Add("email", "peter@griffin.family")
 	postedData.Add("phone", "1234567890")
-	postedData.Add("bungalow_id", "1")
+
+	// data to put in session
+	layout := "2006-01-02"
+	sd, _ := time.Parse(layout, "2037-01-01")
+	ed, _ := time.Parse(layout, "2037-01-02")
+	bungalowId, _ := strconv.Atoi("1")
+
+	reservation := models.Reservation{
+		StartDate:  sd,
+		EndDate:    ed,
+		BungalowID: bungalowId,
+		Bungalow: models.Bungalow{
+			BungalowName: "some bungalow name for tests",
+		},
+	}
 
 	req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
 
 	ctx := getCtx(req)
 	req = req.WithContext(ctx)
+
+	session.Put(ctx, "reservation", reservation)
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
@@ -374,49 +390,30 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 		t.Errorf("PostMakeReservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
 	}
 
-	// case #3: invalid start date
+	// case #3: missing session data
 
 	postedData = url.Values{}
-	postedData.Add("start_date", "invalid")
-	postedData.Add("end_date", "2037-01-02")
-	postedData.Add("full_name", "Peter Griffin")
-	postedData.Add("email", "john@smith.com")
-	postedData.Add("phone", "1234567890")
-	postedData.Add("bungalow_id", "1")
-
-	// create request
-	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
-
-	// get the context
-	ctx = getCtx(req)
-	req = req.WithContext(ctx)
-
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	rr = httptest.NewRecorder()
-
-	handler = http.HandlerFunc(Repo.PostMakeReservation)
-
-	handler.ServeHTTP(rr, req)
-
-	if rr.Code != http.StatusTemporaryRedirect {
-		t.Errorf("PostMakeReservation handler returned wrong response code for invalid start date: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
-	}
-
-	// case #4: invalid end date
-
-	postedData = url.Values{}
-	postedData.Add("start_date", "2037-01-01")
-	postedData.Add("end_date", "invalid")
 	postedData.Add("full_name", "Peter Griffin")
 	postedData.Add("email", "peter@griffin.family")
 	postedData.Add("phone", "1234567890")
-	postedData.Add("bungalow_id", "1")
 
-	// create request
+	// data to put in session
+	layout = "2006-01-02"
+	sd, _ = time.Parse(layout, "2037-01-01")
+	ed, _ = time.Parse(layout, "2037-01-02")
+	bungalowId, _ = strconv.Atoi("1")
+
+	reservation = models.Reservation{
+		StartDate:  sd,
+		EndDate:    ed,
+		BungalowID: bungalowId,
+		Bungalow: models.Bungalow{
+			BungalowName: "some bungalow name for tests",
+		},
+	}
+
 	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
 
-	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -429,47 +426,30 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusTemporaryRedirect {
-		t.Errorf("PostMakeReservation handler returned wrong response code for invalid end date: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
+		t.Errorf("PostMakeReservation handler returned wrong response code for missing session data: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
 	}
 
-	// case #5: invalid bungalow id
+	// case #4: invalid/insufficient data
 
 	postedData = url.Values{}
-	postedData.Add("start_date", "2037-01-01")
-	postedData.Add("end_date", "2037-01-02")
-	postedData.Add("full_name", "Peter Griffin")
-	postedData.Add("email", "peter@griffin.family")
-	postedData.Add("phone", "1234567890")
-	postedData.Add("bungalow_id", "invalid")
-
-	// create request
-	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
-
-	// get the context
-	ctx = getCtx(req)
-	req = req.WithContext(ctx)
-
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	rr = httptest.NewRecorder()
-
-	handler = http.HandlerFunc(Repo.PostMakeReservation)
-
-	handler.ServeHTTP(rr, req)
-
-	if rr.Code != http.StatusTemporaryRedirect {
-		t.Errorf("PostMakeReservation handler returned wrong response code for invalid bungalow id: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
-	}
-
-	// case #6: invalid/insufficient data
-
-	postedData = url.Values{}
-	postedData.Add("start_date", "2037-01-01")
-	postedData.Add("end_date", "2037-01-02")
 	postedData.Add("full_name", "P")
 	postedData.Add("email", "peter@griffin.family")
 	postedData.Add("phone", "1234567890")
-	postedData.Add("bungalow_id", "1")
+
+	// data to put in session
+	layout = "2006-01-02"
+	sd, _ = time.Parse(layout, "2037-01-01")
+	ed, _ = time.Parse(layout, "2037-01-02")
+	bungalowId, _ = strconv.Atoi("1")
+
+	reservation = models.Reservation{
+		StartDate:  sd,
+		EndDate:    ed,
+		BungalowID: bungalowId,
+		Bungalow: models.Bungalow{
+			BungalowName: "some bungalow name for tests",
+		},
+	}
 
 	// create request
 	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
@@ -477,6 +457,8 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
+
+	session.Put(ctx, "reservation", reservation)
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
@@ -487,18 +469,30 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if rr.Result().StatusCode != http.StatusOK {
-		t.Errorf("PostMakeReservation handler returned wrong response code for invalid bungalow id: got %d, wanted %d", rr.Code, http.StatusOK)
+		t.Errorf("PostMakeReservation handler returned wrong response code invalid/insufficient data: got %d, wanted %d", rr.Code, http.StatusOK)
 	}
 
-	// case #7:  failure inserting reservation into database
+	// case #5:  failure inserting reservation into database
 
 	postedData = url.Values{}
-	postedData.Add("start_date", "2037-01-01")
-	postedData.Add("end_date", "2037-01-02")
 	postedData.Add("full_name", "Peter Griffin")
 	postedData.Add("email", "peter@griffin.family")
 	postedData.Add("phone", "1234567890")
-	postedData.Add("bungalow_id", "99")
+
+	// data to put in session
+	layout = "2006-01-02"
+	sd, _ = time.Parse(layout, "2037-01-01")
+	ed, _ = time.Parse(layout, "2037-01-02")
+	bungalowId, _ = strconv.Atoi("99")
+
+	reservation = models.Reservation{
+		StartDate:  sd,
+		EndDate:    ed,
+		BungalowID: bungalowId,
+		Bungalow: models.Bungalow{
+			BungalowName: "some bungalow name for tests",
+		},
+	}
 
 	// create request
 	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
@@ -506,6 +500,8 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
+
+	session.Put(ctx, "reservation", reservation)
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
@@ -519,15 +515,27 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 		t.Errorf("PostMakeReservation handler failed when trying to inserting a reservation into the database: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
 	}
 
-	// case #8: failure to inserting restriction into database
+	// case #6: failure to inserting restriction into database
 
 	postedData = url.Values{}
-	postedData.Add("start_date", "2037-01-01")
-	postedData.Add("end_date", "2037-01-02")
 	postedData.Add("full_name", "Peter Griffin")
 	postedData.Add("email", "peter@griffin.family")
 	postedData.Add("phone", "1234567890")
-	postedData.Add("bungalow_id", "999")
+
+	// data to put in session
+	layout = "2006-01-02"
+	sd, _ = time.Parse(layout, "2037-01-01")
+	ed, _ = time.Parse(layout, "2037-01-02")
+	bungalowId, _ = strconv.Atoi("999")
+
+	reservation = models.Reservation{
+		StartDate:  sd,
+		EndDate:    ed,
+		BungalowID: bungalowId,
+		Bungalow: models.Bungalow{
+			BungalowName: "some bungalow name for tests",
+		},
+	}
 
 	// create request
 	req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(postedData.Encode()))
@@ -535,6 +543,8 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 	// get the context
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
+
+	session.Put(ctx, "reservation", reservation)
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
@@ -547,7 +557,6 @@ func TestRepository_PostMakeReservation(t *testing.T) {
 	if rr.Code != http.StatusTemporaryRedirect {
 		t.Errorf("PostMakeReservation handler failed when trying to inserting a reservation into the database: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
 	}
-
 }
 
 // TestRepository_ReservationJSON tests the ReservationJSON POST-request handler

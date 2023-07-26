@@ -274,32 +274,10 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	sd := r.Form.Get("start_date")
-	ed := r.Form.Get("end_date")
-
-	// Date and Time in Go:
-	// 2023-12-31 -- 01/02 03:04:05PM '06 -0700 -- 12/31 03:04:05PM '23 -0700
-	// https://www.pauladamsmith.com/blog/2011/05/go_time.html
-
-	layout := "2006-01-02"
-
-	startDate, err := time.Parse(layout, sd)
-	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "can't parse arrival date")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
-
-	endDate, err := time.Parse(layout, ed)
-	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "can't parse departurte date")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
-
-	bungalowID, err := strconv.Atoi(r.Form.Get("bungalow_id"))
-	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "can't parse bungalow id")
+	// getting a the reservation data so far from session
+	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		m.App.Session.Put(r.Context(), "error", "Cannot get reservation back from session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
@@ -308,11 +286,15 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		FullName:   r.Form.Get("full_name"),
 		Email:      r.Form.Get("email"),
 		Phone:      r.Form.Get("phone"),
-		StartDate:  startDate,
-		EndDate:    endDate,
-		BungalowID: bungalowID,
+		StartDate:  res.StartDate,
+		EndDate:    res.EndDate,
+		BungalowID: res.BungalowID,
+		Bungalow: models.Bungalow{
+			BungalowName: res.Bungalow.BungalowName,
+		},
 	}
 
+	//validate form data
 	form := forms.New(r.PostForm)
 
 	form.Required("full_name", "email")
@@ -323,12 +305,23 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
 
-		// needed to be commented out because was needed for tests only
-		// http.Error(w, "my own error message", http.StatusSeeOther)
+		// if new rendering of page needed store already collected
+		// (and maybe in session stored) dates as string in stringMap
+		// to use when template is rendered again
+		sd := res.StartDate.Format("2006-01-02")
+		ed := res.EndDate.Format("2006-01-02")
+
+		stringMap := make(map[string]string)
+		stringMap["start_date"] = sd
+		stringMap["end_date"] = ed
+
+		// write new reservation in session as far collected (so far)
+		m.App.Session.Put(r.Context(), "reservation", reservation)
 
 		render.Template(w, r, "make-reservation-page.tpml", &models.TemplateData{
-			Form: form,
-			Data: data,
+			Form:      form,
+			Data:      data,
+			StringMap: stringMap,
 		})
 		return
 	}
@@ -341,9 +334,9 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 	}
 
 	restriction := models.BungalowRestriction{
-		StartDate:     startDate,
-		EndDate:       endDate,
-		BungalowID:    bungalowID,
+		StartDate:     res.StartDate,
+		EndDate:       res.EndDate,
+		BungalowID:    res.BungalowID,
 		ReservationID: newReservationID,
 		RestrictionID: 1,
 	}
