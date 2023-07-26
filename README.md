@@ -17,4 +17,4 @@
 * [github.com/twbs/bootstrap](https://github.com/twbs/bootstrap) | Bootstrap (no jQuery) - HTML, CSS, and JavaScript framework
 * [github.com/mymth/vanillajs-datepicker](https://github.com/mymth/vanillajs-datepicker) | Vanilla JavaScript Datepicker
 * [github.com/jaredreich/notie](https://github.com/jaredreich/notie) | unobtrusive notification - clean and simple JavaScript
-* [github.com/jackc/pgx/v5](https://github.com/sweetalert2/sweetalert2)] | SweetAlert2 - so many options for JavaScript popups
+* [github.com/jackc/pgx/v5](https://github.com/sweetalert2/sweetalert2) | SweetAlert2 - so many options for JavaScript popups
