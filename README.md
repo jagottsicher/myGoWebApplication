@@ -11,7 +11,7 @@
 * [github.com/asaskevich/govalidator](https://github.com/asaskevich/govalidator) | Validator (server-sided)
 * [github.com/jackc/pgx/v5](https://github.com/jackc/pgx/v5) | PostgreSQL Driver & Toolkit
 
-🇬🇧 Also play a part / 🇩🇪 ebenfalls eine Rolle spielen:
+🇬🇧 Also playing a part / 🇩🇪 ebenfalls eine Rolle spielen:
 * [github.com/twbs/bootstrap](https://github.com/twbs/bootstrap) | Bootstrap - HTML, CSS, and JavaScript framework (no jQuery) 
 * [github.com/postgres/postgres](https://github.com/postgres/postgres) | PostgreSQL Server (mirror only)
 * [github.com/dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) | Dbeaver - free multi-platform database tool
