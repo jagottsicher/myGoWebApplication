@@ -12,7 +12,7 @@
 * [github.com/jackc/pgx/v5](https://github.com/jackc/pgx/v5) | PostgreSQL Driver & Toolkit
 
 🇬🇧 Also play a part / 🇩🇪 ebenfalls eine Rolle spielen:
-* [github.com/twbs/bootstrap](https://github.com/twbs/bootstrap) | Bootstrap (no jQuery) - HTML, CSS, and JavaScript framework
+* [github.com/twbs/bootstrap](https://github.com/twbs/bootstrap) | Bootstrap - HTML, CSS, and JavaScript framework (no jQuery) 
 * [github.com/postgres/postgres](https://github.com/postgres/postgres) | PostgreSQL Server (mirror only)
 * [github.com/dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) | Dbeaver - free multi-platform database tool
 * [github.com/mymth/vanillajs-datepicker](https://github.com/mymth/vanillajs-datepicker) | Vanilla JavaScript datepicker
