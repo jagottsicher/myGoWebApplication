@@ -11,7 +11,7 @@
 * [github.com/jackc/pgx/v5](https://github.com/jackc/pgx/v5) | PostgreSQL Driver & Toolkit
 * [github.com/justinas/nosurf](https://github.com/justinas/nosurf) | CSRF-Token
 
-🇬🇧 Also play a part / 🇩🇪 enefalls speiele eine Rolle:
+🇬🇧 Also play a part / 🇩🇪 ebenfalls eine Rolle spielen:
 * [github.com/postgres/postgres](https://github.com/postgres/postgres) | PostgreSQL Server (mirror only)
 * [github.com/dbeaver/dbeaver](https://github.com/dbeaver/dbeaver)| Dbeaver - free multi-platform database tool 
 * [github.com/twbs/bootstrap](https://github.com/twbs/bootstrap) | Bootstrap (no jQuery) - HTML, CSS, and JavaScript framework
