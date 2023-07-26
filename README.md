@@ -1,4 +1,4 @@
-# myGoWebApplication  [![Actions Status](https://github.com/jagottsicher/myGoWebApplication/workflows/Go/badge.svg)]
+# myGoWebApplication  ![Actions Status](https://github.com/jagottsicher/myGoWebApplication/workflows/Go/badge.svg)
 
 🇬🇧 An Udemy course accompanying educational repository to build web applications with Go (golang).
 
