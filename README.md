@@ -7,7 +7,7 @@
 🇬🇧 Dependencies / 🇩🇪 Anhängigkeiten:
 * [github.com/go-chi/chi/v5](https://github.com/go-chi/chi/v5) | Router
 * [github.com/alexedwards/scs/v2](https://github.com/alexedwards/scs/v2) | Sessions
-* * [github.com/justinas/nosurf](https://github.com/justinas/nosurf) | CSRF-Token
+* [github.com/justinas/nosurf](https://github.com/justinas/nosurf) | CSRF-Token
 * [github.com/asaskevich/govalidator](https://github.com/asaskevich/govalidator) | Validator (server-sided)
 * [github.com/jackc/pgx/v5](https://github.com/jackc/pgx/v5) | PostgreSQL Driver & Toolkit
 
