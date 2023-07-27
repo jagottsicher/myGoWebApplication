@@ -18,3 +18,5 @@
 * [github.com/mymth/vanillajs-datepicker](https://github.com/mymth/vanillajs-datepicker) | Vanilla JavaScript datepicker
 * [github.com/jaredreich/notie](https://github.com/jaredreich/notie) | unobtrusive notifications - clean and simple JavaScript
 * [github.com/jackc/pgx/v5](https://github.com/sweetalert2/sweetalert2) | SweetAlert2 - so many options for JavaScript popups
+* [github.com/mailhog/MailHog](https://github.com/mailhog/MailHog) | MailHog - Web and API based SMTP testing
+
