@@ -353,13 +353,27 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 	htmlMessage := fmt.Sprintf(`
 	<strong>Receipt of a request for a reservation</strong><br><br>
 	Dear %s: <br>
-	we received your reservation request to rent the our bungalow r%s" from %s to %s.
+	we received your reservation request to rent the our bungalow "%s" from %s to %s.
 	`, reservation.FullName, res.Bungalow.BungalowName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
 
 	msg := models.MailData{
 		To:      reservation.Email,
 		From:    "noreply@bungalow-bliss.com",
 		Subject: "Receipt of a request for a reservation",
+		Content: htmlMessage,
+	}
+	m.App.MailChan <- msg
+
+	// sending an e-mail to the owner
+	htmlMessage = fmt.Sprintf(`
+		<strong>New Reservation Request</strong><br>
+		we received a new reservation request to rent the bungalow "%s" from %s to %s.
+		`, res.Bungalow.BungalowName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+
+	msg = models.MailData{
+		To:      "whoever@is-in-charge.com",
+		From:    "noreply@bungalow-bliss.com",
+		Subject: "New Reservation Request",
 		Content: htmlMessage,
 	}
 	m.App.MailChan <- msg
