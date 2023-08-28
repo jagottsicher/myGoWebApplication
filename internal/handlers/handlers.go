@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -347,6 +348,21 @@ func (m *Repository) PostMakeReservation(w http.ResponseWriter, r *http.Request)
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
+
+	// sending an e-mail to the user
+	htmlMessage := fmt.Sprintf(`
+	<strong>Receipt of a request for a reservation</strong><br><br>
+	Dear %s: <br>
+	we received your reservation request to rent the our bungalow r%s" from %s to %s.
+	`, reservation.FullName, res.Bungalow.BungalowName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+
+	msg := models.MailData{
+		To:      reservation.Email,
+		From:    "noreply@bungalow-bliss.com",
+		Subject: "Receipt of a request for a reservation",
+		Content: htmlMessage,
+	}
+	m.App.MailChan <- msg
 
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 	http.Redirect(w, r, "/reservation-overview", http.StatusSeeOther)
