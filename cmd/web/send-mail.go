@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/jagottsicher/myGoWebApplication/internal/models"
@@ -32,7 +35,18 @@ func sendMSG(m models.MailData) {
 
 	email := mail.NewMSG()
 	email.SetFrom(m.From).AddTo(m.To).SetSubject(m.Subject)
-	email.SetBody(mail.TextHTML, m.Content)
+
+	if m.Template == "" {
+		email.SetBody(mail.TextHTML, m.Content)
+	} else {
+		data, err := os.ReadFile(fmt.Sprintf("./static/email/templates/%s", m.Template))
+		if err != nil {
+			app.ErrorLog.Println(err)
+		}
+		mailTemplate := string(data)
+		msgToSend := strings.Replace(mailTemplate, "[%E-MAIL-CONTENT%]", m.Content, 1)
+		email.SetBody(mail.TextHTML, msgToSend)
+	}
 
 	err = email.Send(client)
 	if err != nil {
