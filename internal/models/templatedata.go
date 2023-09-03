@@ -9,7 +9,7 @@ type TemplateData struct {
 	FloatMap  map[string]float64
 	Data      map[string]interface{}
 	CSRFToken string
-	Flash     string
+	Success   string
 	Warning   string
 	Error     string
 	Form      *forms.Form

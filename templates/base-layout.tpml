@@ -122,8 +122,8 @@
           notify({{.}}, "error")
           {{end}}
 
-          {{with .Flash}}
-          notify({{.}}, "flash")
+          {{with .Success}}
+          notify({{.}}, "success")
           {{end}}
 
           {{with .Warning}}
