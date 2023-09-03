@@ -475,3 +475,10 @@ func (m *Repository) BookBungalow(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
 }
+
+// ShowLogin shows the login page
+func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "login-page.tpml", &models.TemplateData{
+		Form: forms.New(nil),
+	})
+}
