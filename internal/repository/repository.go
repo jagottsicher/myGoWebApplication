@@ -14,4 +14,7 @@ type DatabaseRepo interface {
 	SearchAvailabilityByDatesByBungalowID(start, end time.Time, bungalowID int) (bool, error)
 	SearchAvailabilityByDatesForAllBungalows(start, end time.Time) ([]models.Bungalow, error)
 	GetBungalowByID(id int) (models.Bungalow, error)
+	GetUserByID(id int) (models.User, error)
+	UpdateUser(u models.User) error
+	Authenticate(email, testPassword string) (int, string, error)
 }

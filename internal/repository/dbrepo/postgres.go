@@ -2,9 +2,11 @@ package dbrepo
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/jagottsicher/myGoWebApplication/internal/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (m *postgresDBRepo) AllUsers() bool {
@@ -183,4 +185,82 @@ func (m *postgresDBRepo) GetBungalowByID(id int) (models.Bungalow, error) {
 	}
 
 	return bungalow, nil
+}
+
+// GetUserByID returns user data by id
+func (m *postgresDBRepo) GetUserByID(id int) (models.User, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `select id, full_name, email, password, role, created_at, updated_at
+	from users where id = $1
+	`
+	row := m.DB.QueryRowContext(ctx, query, id)
+
+	var u models.User
+	err := row.Scan(
+		&u.ID,
+		&u.FullName,
+		&u.Email,
+		&u.Password,
+		&u.Role,
+		&u.CreatedAt,
+		&u.UpdatedAt,
+	)
+
+	if err != nil {
+		return u, err
+	}
+
+	return u, nil
+}
+
+// UpdateUser updates basic user data in the database
+func (m *postgresDBRepo) UpdateUser(u models.User) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+		update users set full_name = $1, email = $2, role = $3, updated_at = $4
+`
+	_, err := m.DB.ExecContext(ctx, query,
+		u.FullName,
+		u.Email,
+		u.Role,
+		time.Now(),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Authenticate authenticates a user by data
+func (m *postgresDBRepo) Authenticate(email, testPassword string) (int, string, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var id int
+	var passwordHash string
+
+	row := m.DB.QueryRowContext(ctx, "select id, password from users where email =$1", email)
+
+	err := row.Scan(&id, &passwordHash)
+	if err != nil {
+		return id, "", err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(testPassword))
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		return 0, "", errors.New("wrong password")
+	} else if err != nil {
+		return 0, "", err
+	}
+
+	return id, passwordHash, nil
 }
