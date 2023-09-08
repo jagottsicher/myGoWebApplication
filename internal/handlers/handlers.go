@@ -12,6 +12,7 @@ import (
 	"github.com/jagottsicher/myGoWebApplication/internal/config"
 	"github.com/jagottsicher/myGoWebApplication/internal/driver"
 	"github.com/jagottsicher/myGoWebApplication/internal/forms"
+	"github.com/jagottsicher/myGoWebApplication/internal/helpers"
 	"github.com/jagottsicher/myGoWebApplication/internal/models"
 	"github.com/jagottsicher/myGoWebApplication/internal/render"
 	"github.com/jagottsicher/myGoWebApplication/internal/repository"
@@ -523,7 +524,7 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	_ = m.App.Session.Destroy(r.Context())
 	_ = m.App.Session.RenewToken(r.Context())
-	m.App.Session.Put(r.Context(), "success", "Logged out")
+
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 
 }
@@ -540,7 +541,19 @@ func (m *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Request
 
 // AdminAllReservations displays all reservations in admin area
 func (m *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "admin-all-reservations-page.tpml", &models.TemplateData{})
+
+	reservations, err := m.DB.AllReservations()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["reservations"] = reservations
+
+	render.Template(w, r, "admin-all-reservations-page.tpml", &models.TemplateData{
+		Data: data,
+	})
 }
 
 // AdminReservationsCalendar display a calendar with registrations

@@ -15,6 +15,7 @@
 🇬🇧 Also playing a part / 🇩🇪 ebenfalls eine Rolle spielen:
 * [github.com/twbs/bootstrap](https://github.com/twbs/bootstrap) | Bootstrap - HTML, CSS, and JavaScript framework (no jQuery) 
 * [RoyalUI-Free-Bootstrap-Admin-Template](https://github.com/BootstrapDash/RoyalUI-Free-Bootstrap-Admin-Template) | Free Bootstrap 4 Admin Template  
+* [github.com/fiduswriter/Simple-DataTables](https://github.com/fiduswriter/Simple-DataTables) | DataTables but in TypeScript transpiled to Vanilla JS
 * [github.com/postgres/postgres](https://github.com/postgres/postgres) | PostgreSQL Server (mirror only)
 * [github.com/gobuffalo/pop](github.com/gobuffalo/pop) | Soda/Migrations - standardization of database tasks
 * [github.com/dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) | Dbeaver - free multi-platform database tool
