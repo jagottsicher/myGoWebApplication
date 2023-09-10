@@ -536,7 +536,19 @@ func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
 
 // AdminNewReservations displays new reservations only in admin area
 func (m *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "admin-new-reservations-page.tpml", &models.TemplateData{})
+
+	reservations, err := m.DB.AllNewReservations()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["reservations"] = reservations
+
+	render.Template(w, r, "admin-new-reservations-page.tpml", &models.TemplateData{
+		Data: data,
+	})
 }
 
 // AdminAllReservations displays all reservations in admin area
