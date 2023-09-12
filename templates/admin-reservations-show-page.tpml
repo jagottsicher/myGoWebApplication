@@ -1,0 +1,55 @@
+{{template "admin" .}}
+
+{{define "page-title"}}
+    Reservation Details
+{{end}}
+
+{{define "content"}}
+
+    {{$res := index .Data "reservation"}}
+    {{$src := index .StringMap "src"}}
+
+    <p>
+        <strong>Bungalow:</strong> {{$res.Bungalow.BungalowName}}<br>
+        <strong>Arrival:</strong> {{humanReadableDate $res.StartDate}} - <strong>Departure:</strong> {{humanReadableDate $res.EndDate}}<br>
+        <strong>Status:</strong> {{$res.Status}}<br>
+        0 = New, 1 = Processed, 3 = Confirmed, 4 = ...
+    </p>
+
+    <form action="/admin/reservations/{{$src}}/{{$res.ID}}" method="POST" class="" novalidate>
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+
+        <div class="form-group mt-3">
+            <label for="full_name">Full Name:</label>
+            {{with .Form.Errors.Get "full_name"}}
+            <label class="text-danger">{{.}}</label>
+            {{end}}
+            <input class="form-control {{with .Form.Errors.Get "full_name"}}is-invalid{{end}}" 
+            id="full_name" autocomplete="off" type="text" name="full_name" value="{{$res.FullName}}" required>
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="email">Email:</label>
+            {{with .Form.Errors.Get "email"}}
+            <label class="text-danger">{{.}}</label>
+            {{end}}
+            <input class="form-control {{with .Form.Errors.Get "email"}}is-invalid{{end}}" 
+            id="email" autocomplete="off" type="email" name="email" value="{{$res.Email}}" required>
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="phone">Phone:</label>
+            {{with .Form.Errors.Get "phone"}}
+            <label class="text-danger">{{.}}</label>
+            {{end}}
+            <input class="form-control {{with .Form.Errors.Get "phone"}}is-invalid{{end}}" 
+            id="phone" autocomplete="off" type="tel" name="phone" value="{{$res.Phone}}" required>
+        </div>
+
+        <hr>
+
+        <input type="submit" class="btn btn-primary" value="Save">
+        <a href="/admin/reservations-{{$src}}" class="btn btn-secondary">Cancel</a>
+
+    </form>
+{{end}}
