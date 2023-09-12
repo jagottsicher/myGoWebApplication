@@ -13,6 +13,7 @@
         <!-- plugin css for this page -->
         <!-- End plugin css for this page -->
         <!-- inject:css -->
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
         <link rel="stylesheet" href="/static/admin/css/style.css">
         <!-- endinject -->
         <link rel="shortcut icon" href="/static/admin/images/favicon.png" />
@@ -20,13 +21,21 @@
             .content-wrapper {
                 background: white;
             }
+
             label {
                 font-weight: bold;
             }
-        </style>
-            {{block "css" . }}
 
-            {{end}}
+            .notie-container {
+                box-shadow: none;
+                z-index: 10010;
+            }
+        </style>
+
+    {{block "css" . }}
+
+    {{end}}
+
     </head>
         
     <body>
@@ -136,7 +145,41 @@
         <script src="/static/admin/js/todolist.js"></script>
         <!-- endinject -->
         <!-- Custom js for this page-->
+        <script src="https://unpkg.com/notie"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/static/js/app.js"></script>
         <script src="/static/admin/js/dashboard.js"></script>
+        <script>
+            let attention = Prompt();
+            function notify(msg, msgType) {
+           notie.alert({
+            type: msgType,
+            text: msg,
+           })
+          }
+    
+          function notifyModal(title, text, icon, confirmationButtonText) {
+            Swal.fire({
+              icon: icon,
+              title: title,
+              html: text,
+              confirmButtonText: confirmationButtonText,
+            })
+          }
+
+          {{with .Error}}
+          notify({{.}}, "error")
+          {{end}}
+
+          {{with .Success}}
+          notify({{.}}, "success")
+          {{end}}
+
+          {{with .Warning}}
+          notify({{.}}, "warning")
+          {{end}}
+    
+        </script>
         <!-- End custom js for this page-->
 
         {{block "js" . }}
