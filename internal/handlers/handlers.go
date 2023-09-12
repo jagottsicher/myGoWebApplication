@@ -604,3 +604,38 @@ func (m *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request
 		Form:      forms.New(nil),
 	})
 }
+
+// AdminPostShowReservation handles a post request to update a reservation
+func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	exploded := strings.Split(r.RequestURI, "/")
+
+	id, err := strconv.Atoi(exploded[4])
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	res, err := m.DB.GetReservationByID(id)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	res.FullName = r.Form.Get("full_name")
+	res.Email = r.Form.Get("email")
+	res.Phone = r.Form.Get("phone")
+
+	err = m.DB.UpdateReservation(res)
+
+	src := exploded[3]
+
+	m.App.Session.Put(r.Context(), "success", "Changes saved")
+
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
+}
