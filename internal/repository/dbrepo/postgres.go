@@ -134,6 +134,7 @@ func (m *postgresDBRepo) SearchAvailabilityByDatesForAllBungalows(start, end tim
 	if err != nil {
 		return bungalows, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var bungalow models.Bungalow

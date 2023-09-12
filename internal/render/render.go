@@ -21,7 +21,7 @@ var functions = template.FuncMap{
 
 // HumanReadableDate returns a time value in the YYYY-MM-DD format
 func HumanReadableDate(t time.Time) string {
-	return t.Format("2006-01-01")
+	return t.Format("2006-01-02")
 }
 
 // AddDefaultData contains Data which will be added to data sent to templates
