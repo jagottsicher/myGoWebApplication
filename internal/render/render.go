@@ -17,11 +17,34 @@ import (
 
 var functions = template.FuncMap{
 	"humanReadableDate": HumanReadableDate,
+	"formatDate":        FormatDate,
+	"iterate":           Iterate,
+	"add":               Add,
 }
 
 // HumanReadableDate returns a time value in the YYYY-MM-DD format
 func HumanReadableDate(t time.Time) string {
 	return t.Format("2006-01-02")
+}
+
+// FormatDate returns a string of a time formatted as demanded
+func FormatDate(t time.Time, f string) string {
+	return t.Format(f)
+}
+
+// Iterate creates and returns a slice of ints, starting at 1, going to count
+func Iterate(count int) []int {
+	var i int
+	var items []int
+	for i = 0; i < count; i++ {
+		items = append(items, i)
+	}
+	return items
+}
+
+// Add adds b to a
+func Add(a, b int) int {
+	return a + b
 }
 
 // AddDefaultData contains Data which will be added to data sent to templates

@@ -23,4 +23,5 @@ type DatabaseRepo interface {
 	UpdateReservation(r models.Reservation) error
 	DeleteReservation(id int) error
 	UpdateStatusOfReservation(id, status int) error
+	AllBungalows() ([]models.Bungalow, error)
 }

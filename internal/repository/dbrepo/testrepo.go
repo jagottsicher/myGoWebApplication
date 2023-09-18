@@ -155,3 +155,10 @@ func (m *testDBRepo) UpdateStatusOfReservation(id, status int) error {
 
 	return nil
 }
+
+func (m *testDBRepo) AllBungalows() ([]models.Bungalow, error) {
+
+	var bungalows []models.Bungalow
+
+	return bungalows, nil
+}

@@ -475,3 +475,40 @@ func (m *postgresDBRepo) UpdateStatusOfReservation(id, status int) error {
 
 	return nil
 }
+
+// AllBungalows returns a slice of all bungalows
+func (m *postgresDBRepo) AllBungalows() ([]models.Bungalow, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var bungalows []models.Bungalow
+
+	query := `select id, bungalow_name, created_at, updated_at from bungalows order by id`
+
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return bungalows, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var b models.Bungalow
+		err := rows.Scan(
+			&b.ID,
+			&b.BungalowName,
+			&b.CreatedAt,
+			&b.UpdatedAt,
+		)
+		if err != nil {
+			return bungalows, err
+		}
+		bungalows = append(bungalows, b)
+	}
+
+	if err = rows.Err(); err != nil {
+		return bungalows, err
+	}
+
+	return bungalows, nil
+}
