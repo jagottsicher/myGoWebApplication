@@ -162,3 +162,10 @@ func (m *testDBRepo) AllBungalows() ([]models.Bungalow, error) {
 
 	return bungalows, nil
 }
+
+func (m *testDBRepo) GetRestrictionsForBungalowByDate(bungalowID int, start, end time.Time) ([]models.BungalowRestriction, error) {
+
+	var restrictions []models.BungalowRestriction
+
+	return restrictions, nil
+}

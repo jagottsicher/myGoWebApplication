@@ -512,3 +512,46 @@ func (m *postgresDBRepo) AllBungalows() ([]models.Bungalow, error) {
 
 	return bungalows, nil
 }
+
+// GetRestrictionsForBungalowByDate returns restrictions for a bungalow by date range
+func (m *postgresDBRepo) GetRestrictionsForBungalowByDate(bungalowID int, start, end time.Time) ([]models.BungalowRestriction, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var restrictions []models.BungalowRestriction
+
+	query := `
+		select id, coalesce(reservation_id, 0), restriction_id, bungalow_id, start_date, end_date
+		from bungalow_restrictions where $1 < end_date and $2 >= start_date
+		and bungalow_id = $3
+	`
+	rows, err := m.DB.QueryContext(ctx, query, start, end, bungalowID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var r models.BungalowRestriction
+		err := rows.Scan(
+			&r.ID,
+			&r.ReservationID,
+			&r.RestrictionID,
+			&r.BungalowID,
+			&r.StartDate,
+			&r.EndDate,
+		)
+		if err != nil {
+			return nil, err
+		}
+		restrictions = append(restrictions, r)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return restrictions, nil
+
+}

@@ -619,6 +619,43 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 
 	data["bungalows"] = bungalows
 
+	for _, x := range bungalows {
+		// create maps (one for reservations, one for blocked days)
+		reservationMap := make(map[string]int)
+		blockMap := make(map[string]int)
+
+		// iterate over all days with for-loop over dates and fill the maps
+		for d := firstOfMonth; d.After(lastOfMonth) == false; d.AddDate(0, 0, 1) {
+			reservationMap[d.Format("2006-01-2")] = 0
+			blockMap[d.Format("2006-01-2")] = 0
+		}
+
+		// read in all the restrictions for the bungalow for the current month
+		restrictions, err := m.DB.GetRestrictionsForBungalowByDate(x.ID, firstOfMonth, lastOfMonth)
+		if err != nil {
+			helpers.ServerError(w, err)
+			return
+		}
+
+		// loop over restrictions and put reservations and blocked days in the corresponding map
+		for _, y := range restrictions {
+			if y.ReservationID > 0 {
+				// if it is a reservation
+				for d := y.StartDate; d.After(y.EndDate) == false; d = d.AddDate(0, 0, 1) {
+					reservationMap[d.Format("2006-01-2")] = y.ReservationID
+				}
+			} else {
+				// if it is a block
+				blockMap[y.StartDate.Format("2006-01-2")] = y.ID
+			}
+		}
+
+		data[fmt.Sprintf("reservation_map_%d", x.ID)] = reservationMap
+		data[fmt.Sprintf("block_map_%d", x.ID)] = blockMap
+
+		m.App.Session.Put(r.Context(), fmt.Sprintf("block_map_%d", x.ID), blockMap)
+	}
+
 	render.Template(w, r, "admin-reservations-calendar-page.tpml", &models.TemplateData{
 		StringMap: stringMap,
 		Data:      data,
