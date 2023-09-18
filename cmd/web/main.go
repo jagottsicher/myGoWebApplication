@@ -83,7 +83,7 @@ func run() (*driver.DB, error) {
 
 	// connecting to database
 	log.Println("Connecting to database...")
-	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=mygowebapp user=postgres password=lolli2511")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=mygowebapp user=postgres password=")
 	if err != nil {
 		log.Fatal("No connection to database! Terminating ...")
 	}
