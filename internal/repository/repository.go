@@ -25,4 +25,6 @@ type DatabaseRepo interface {
 	UpdateStatusOfReservation(id, status int) error
 	AllBungalows() ([]models.Bungalow, error)
 	GetRestrictionsForBungalowByDate(bungalowID int, start, end time.Time) ([]models.BungalowRestriction, error)
+	InsertBlockForBungalow(id int, startDate time.Time) error
+	DeleteBlockByID(id int) error
 }

@@ -800,7 +800,10 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 				if val > 0 {
 					if !form.Has(fmt.Sprintf("remove_block_%d_%s", x.ID, name)) {
 						// delete the bungalow_restriction by id
-						log.Println("Deleting block:", value)
+						err := m.DB.DeleteBlockByID(value)
+						if err != nil {
+							log.Println(err)
+						}
 					}
 				}
 			}
@@ -815,7 +818,10 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 			t, _ := time.Parse("2006-01-2", exploded[3])
 
 			// insert the bungalow_restriction by id
-			log.Println("Block bungalow with id", bungalowID, "for day:", t)
+			err := m.DB.InsertBlockForBungalow(bungalowID, t)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 
