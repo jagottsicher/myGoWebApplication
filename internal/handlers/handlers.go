@@ -774,6 +774,51 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 	year, _ := strconv.Atoi(r.Form.Get("y"))
 	month, _ := strconv.Atoi(r.Form.Get("m"))
 
+	// processing existing blocks
+	bungalows, err := m.DB.AllBungalows()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+
+	for _, x := range bungalows {
+		// Get the block map from the session
+		curMap := m.App.Session.Get(r.Context(), fmt.Sprintf("block_map_%d", x.ID)).(map[string]int)
+
+		// Loop through the block map from before editing
+		// if there is an entry in the map
+		// that does not exist in our posted data and if the restriction id is greater than zero,
+		// then that is a day the block needs to be removed from
+
+		for name, value := range curMap {
+			// ok will be false if value is not in map
+			if val, ok := curMap[name]; ok {
+				// only checking values > 0, and not in posted form
+				// the remainders are just placeholders for non-blocked days
+				if val > 0 {
+					if !form.Has(fmt.Sprintf("remove_block_%d_%s", x.ID, name)) {
+						// delete the bungalow_restriction by id
+						log.Println("Deleting block:", value)
+					}
+				}
+			}
+		}
+	}
+
+	// handling new blocks
+	for name, _ := range r.PostForm {
+		if strings.HasPrefix(name, "add_block") {
+			exploded := strings.Split(name, "_")
+			bungalowID, _ := strconv.Atoi(exploded[2])
+			t, _ := time.Parse("2006-01-2", exploded[3])
+
+			// insert the bungalow_restriction by id
+			log.Println("Block bungalow with id", bungalowID, "for day:", t)
+		}
+	}
+
 	m.App.Session.Put(r.Context(), "success", "Changes successfully saved")
 	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%d&m=%d", year, month), http.StatusSeeOther)
 }
