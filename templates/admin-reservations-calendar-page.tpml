@@ -29,6 +29,8 @@
 		
 		<form action="/admin/reservations-calendar" method="POST" class="" novalidate>
 		<input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+		<input type="hidden" name="m" value="{{index .StringMap "this_month"}}">
+		<input type="hidden" name="y" value="{{index .StringMap "this_month_year"}}">
 		{{range $bungalows}}
 			{{$bungalowID := .ID}}
 			{{$blocks := index $.Data (printf "block_map_%d" .ID)}}
@@ -58,6 +60,7 @@
 									value="{{index $blocks (printf "%s-%s-%d" $curYear $curMonth (add $index 1))}}"
 								{{else}}
 									name="add_block_{{$bungalowID}}_{{printf "%s-%s-%d" $curYear $curMonth (add $index 1)}}"
+									value="1"
 							   {{end}}
 							   type ="checkbox">
 							  {{end}}

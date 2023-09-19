@@ -771,5 +771,9 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 		return
 	}
 
-	log.Println("works")
+	year, _ := strconv.Atoi(r.Form.Get("y"))
+	month, _ := strconv.Atoi(r.Form.Get("m"))
+
+	m.App.Session.Put(r.Context(), "success", "Changes successfully saved")
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%d&m=%d", year, month), http.StatusSeeOther)
 }
