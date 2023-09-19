@@ -27,6 +27,8 @@
 			</div>
 			<div class="clearfix"></div>
 		
+		<form action="/admin/reservations-calendar" method="POST" class="" novalidate>
+		<input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 		{{range $bungalows}}
 			{{$bungalowID := .ID}}
 			{{$blocks := index $.Data (printf "block_map_%d" .ID)}}
@@ -66,5 +68,8 @@
 			</div>
 
 		{{end}}
+		<hr>
+		<input type="submit" class="btn btn-primary" value="Save Changes">
+		</form>
 		</div>
 	{{end}}
