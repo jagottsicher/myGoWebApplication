@@ -547,7 +547,6 @@ func (m *postgresDBRepo) GetRestrictionsForBungalowByDate(bungalowID int, start,
 		}
 		restrictions = append(restrictions, r)
 	}
-
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}

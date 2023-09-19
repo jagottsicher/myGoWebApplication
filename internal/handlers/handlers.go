@@ -625,7 +625,7 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 		blockMap := make(map[string]int)
 
 		// iterate over all days with for-loop over dates and fill the maps
-		for d := firstOfMonth; d.After(lastOfMonth) == false; d.AddDate(0, 0, 1) {
+		for d := firstOfMonth; d.After(lastOfMonth) == false; d = d.AddDate(0, 0, 1) {
 			reservationMap[d.Format("2006-01-2")] = 0
 			blockMap[d.Format("2006-01-2")] = 0
 		}
@@ -637,7 +637,6 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 			return
 		}
 
-		// loop over restrictions and put reservations and blocked days in the corresponding map
 		for _, y := range restrictions {
 			if y.ReservationID > 0 {
 				// if it is a reservation
@@ -654,6 +653,7 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 		data[fmt.Sprintf("block_map_%d", x.ID)] = blockMap
 
 		m.App.Session.Put(r.Context(), fmt.Sprintf("block_map_%d", x.ID), blockMap)
+
 	}
 
 	render.Template(w, r, "admin-reservations-calendar-page.tpml", &models.TemplateData{
