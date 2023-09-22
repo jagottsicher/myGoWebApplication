@@ -25,7 +25,7 @@
 					{{range $res}}
 						<tr>
 							<td>{{.ID}}</td>
-							<td><a href="/admin/reservations/new/{{.ID}}">{{.FullName}}</a></td>
+							<td><a href="/admin/reservations/new/{{.ID}}/show">{{.FullName}}</a></td>
 							<td>{{.Bungalow.BungalowName}}</td>
 							<td>{{humanReadableDate .StartDate}}</td>
 							<td>{{humanReadableDate .EndDate}}</td>
