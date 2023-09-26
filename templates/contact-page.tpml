@@ -11,6 +11,7 @@
             </p>
         </div>
     </div>
+    
     <div class="row">
         <iframe scrolling="no" marginheight="0" marginwidth="0" id="gmap_canvas" src="https://maps.google.com/maps?width=800&amp;height=600&amp;hl=en&amp;q=tonowhere%20USA+(Bungalow%20Bliss)&amp;t=&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed" width="800" height="600" frameborder="0"></iframe>
     </div>

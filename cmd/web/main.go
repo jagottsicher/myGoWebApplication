@@ -19,7 +19,7 @@ import (
 )
 
 const portNumber = ":8080"
-const versionNumber = "v1.0.169"
+const versionNumber = "v1.0.176"
 
 var app config.AppConfig
 var session *scs.SessionManager
