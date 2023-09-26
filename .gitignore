@@ -17,5 +17,11 @@
 # Exclude my Database Setup
 database.yml
 
+# an update script in production
+update.sh
+
+# log directory in production	
+logs/
+
 # ignore the git language inclusion
 .gitattributes
