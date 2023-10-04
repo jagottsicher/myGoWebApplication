@@ -40,5 +40,4 @@ func sendMSG(m models.MailData) {
 	} else {
 		log.Println("E-Mail sent out!")
 	}
-
 }

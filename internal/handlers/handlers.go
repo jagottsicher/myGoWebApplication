@@ -198,7 +198,7 @@ func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
 
 	available, err := m.DB.SearchAvailabilityByDatesByBungalowID(startDate, endDate, bungalowID)
 	if err != nil {
-		// needs to be removed that the test work
+		// needs to be removed that the test works
 		// helpers.ServerError(w, err)
 		resp := jsonResponse{
 			OK:      false,
@@ -220,7 +220,7 @@ func (m *Repository) ReservationJSON(w http.ResponseWriter, r *http.Request) {
 	}
 
 	output, _ := json.MarshalIndent(resp, "", "    ")
-	// needs to be removed that the test work
+	// needs to be removed that the test works
 	// if err != nil {
 	// 	helpers.ServerError(w, err)
 	// }
