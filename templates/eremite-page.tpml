@@ -65,6 +65,7 @@
         const elem = document.getElementById("reservation-dates-modal");
         const rp = new DateRangePicker(elem, {
           format: 'yyyy-mm-dd',
+          minDate: new Date(),
           showOnFocus: true,
         })
       },
@@ -78,6 +79,7 @@
         let form = document.getElementById("check-availability-form");
         let = formData = new FormData(form);
         formData.append("csrf_token", "{{.CSRFToken}}");
+        formData.append("bungalow_id", "1")
 
         fetch('/reservation-json', {
           method: "POST",
@@ -85,9 +87,25 @@
         })
         .then(response => response.json())
         .then (data => {
-          console.log(data)
-          console.log(data.ok)
-          console.log(data.message)
+          if (data.ok) {
+            attention.custom({
+              icon: 'success',
+              showConfirmButton: false,
+              msg: '<p>The bungalow is available!</p>'
+              + '<p><a href="/book-bungalow?id='
+              + data.bungalow_id
+              + '&s='
+              + data.start_date
+              + '&e='
+              + data.end_date
+              + '" class="btn btn-primary">'
+              + 'Book Now!</a></p>'
+            })
+          } else {
+            attention.error({
+              msg: ":( This holiday home is not available at that time.",
+            })
+          }
         })
       }
     });

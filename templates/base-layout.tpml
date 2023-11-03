@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>This is the title of the page</title>
+    <title>Bungalow Bliss</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.1/dist/css/datepicker.min.css">    
@@ -18,35 +18,50 @@
 
     <nav class="navbar sticky-top navbar-expand-lg bg-dar bg-body-tertiary" data-bs-theme="dark">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Navbar</a>
+          <a class="navbar-brand" href="/"><img src="../static/images/logoipsum-227.svg"></a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/about">About</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/contact">Contact</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Holiday Homes
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/eremite">Eremite (2 BR)</a></li>
-                  <li><a class="dropdown-item" href="/couple">Couple plus (3 BR)</a></li>
-                  <li><a class="dropdown-item" href="/family">Family & Friends (5 BR)</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/reservation">Book Now!</a>
-              </li>
-            </ul>
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/about">About</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/contact">Contact</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Holiday Homes
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/eremite">Eremite (2 BR)</a></li>
+                    <li><a class="dropdown-item" href="/couple">Couple plus (3 BR)</a></li>
+                    <li><a class="dropdown-item" href="/family">Family & Friends (5 BR)</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/reservation">Book Now!</a>
+                </li>
+                <li class="nav-item">
+                  {{ if eq .IsAuthenticated 1}}
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="">
+                    Admin
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/admin/dashboard">Dashboard</a></li>
+                      <li><a class="dropdown-item" href="/user/logout">Logout</a></li>
+                    </ul>
+                  </li>
+                  {{else}}
+                    <a class="nav-link" href="/user/login">Login</a>
+                  {{end}}
+                </li>
+              </ul>
           </div>
         </div>
       </nav>
@@ -54,22 +69,31 @@
 
         {{end}}
 
-        <div class="row sticky-bottom bb-footer">
+      <footer class="row bb-footer">
+        <div class="row">
             <div class="col">
-                Left
+                <h4>Bungalow Bliss</h4>
+                Road to Nowhere<br>
+                Abandonton, 123456<br>
+                USA<br> 
+                Earth, Universe C-137<br>
             </div>
             <div class="col">
-                Middle
+              <img src="../static/images/qrcode.68431732.png" style="max-width:120px"><br>
             </div>
             <div class="col">
-                Right
+              <img src="../static/images/logoipsum-227.svg"><br>
+              <h4>Bungalow Bliss</h4>
+              Unforgettable Holiday Experiences
             </div>
         </div>
-    
+      </footer>
+      
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.1/dist/js/datepicker-full.min.js"></script>
         <script src="https://unpkg.com/notie"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/static/js/app.js"></script>
 
         {{block "js" .}}
 
@@ -118,125 +142,13 @@
           notify({{.}}, "error")
           {{end}}
 
-          {{with .Flash}}
-          notify({{.}}, "flash")
+          {{with .Success}}
+          notify({{.}}, "success")
           {{end}}
 
           {{with .Warning}}
           notify({{.}}, "warning")
           {{end}}
-    
-          function Prompt() {
-    
-            let toast = function(c) {
-              const{
-                msg = '',
-                title = '',
-                footer = '',
-              } = c; 
-    
-              const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                  toast.addEventListener('mouseenter', Swal.stopTimer)
-                  toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-              })
-    
-              Toast.fire({
-                icon: 'success',
-                title: title,
-                text: msg,
-                footer: footer,
-              })
-            }
-    
-            let success = function(c) {
-              const {
-                msg = '',
-                title = '',
-                footer = '',
-              } = c;
-    
-              Swal.fire({
-                icon: 'success',
-                title: title,
-                text: msg,
-                footer: footer,
-              })
-            }
-    
-            let error = function(c) {
-              const {
-                msg = '',
-                title = '',
-                footer = '',
-              } = c;
-    
-              Swal.fire({
-                icon: 'error',
-                title: title,
-                text: msg,
-                footer: footer,
-              })
-            }
-    
-            async function custom(c) {
-              const {
-                    msg = "",
-                    title = ""
-                } = c;
-    
-              const { value: result } = await Swal.fire({
-                title: title,
-                html: msg,
-                backdrop: false,
-                focusConfirm: false,
-                showCancelButton: true,
-                willOpen: () => {
-                  if (c.willOpen !== undefined) {
-                    c.willOpen();
-                  }
-                },
-                didOpen: () => {
-                  if (c.didOpen !== undefined) {
-                    c.didOpen();
-                  }
-                },
-                preConfirm: () => {
-                  return [
-                    document.getElementById('start').value,
-                    document.getElementById('end').value
-                  ]
-                }
-              })
-    
-              if (result) {
-                if (result.dismiss !== Swal.DismissReason.cancel) {
-                  if (result.value !== "") {
-                    if (c.callback !== undefined) {
-                      c.callback(result);
-                    } 
-                  } else {
-                    c.callback(false);
-                  }
-                } else {
-                   c.callback(false);
-                }
-              }
-            }
-    
-            return {
-              toast: toast,
-              success: success,
-              error: error,
-              custom: custom,
-            }
-          }
     
         </script>
       

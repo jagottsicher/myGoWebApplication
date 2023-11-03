@@ -1,0 +1,4 @@
+add_foreign_key("reservations", "bungalow_id", {"bungalows": ["id"]}, {
+    "on_delete": "cascade",
+    "on_update": "cascade",
+})

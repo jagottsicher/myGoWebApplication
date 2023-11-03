@@ -1,0 +1,1 @@
+drop_foreign_key("reservations", "reservations_bungalows_id_fk", {})

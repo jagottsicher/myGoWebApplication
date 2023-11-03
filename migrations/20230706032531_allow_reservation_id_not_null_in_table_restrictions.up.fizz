@@ -1,0 +1,1 @@
+change_column("bungalow_restrictions", "reservation_id", "integer", {"null": true})

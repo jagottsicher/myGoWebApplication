@@ -8,10 +8,10 @@
               <h1 class="text-center">Check Availability</h1>
               <form class="row g-2 needs-validation" id="reservation-dates" novalidate action="/reservation" method="POST">
                 <div class="col mb-3">
-                  <input required type="text" class="form-control" name="startingDate" id="startingDate" placeholder="Arrival Date">
+                  <input required type="text" class="form-control" name="start" id="start" placeholder="Arrival Date">
                 </div>
                 <div class="col mb-3">
-                  <input required type="text" class="form-control" name="endingDate" id="endingDate" placeholder="Departure Date"> 
+                  <input required type="text" class="form-control" name="end" id="end" placeholder="Departure Date"> 
                 </div>
                 <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
@@ -30,7 +30,8 @@
   <script>
     const elem = document.getElementById('reservation-dates');
     const rangepicker = new DateRangePicker(elem, {
-    format: "yyyy-mm-dd"
+    format: "yyyy-mm-dd",
+    minDate: new Date(),
     }); 
   </script>
 {{end}}

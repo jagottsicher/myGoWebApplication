@@ -5,8 +5,16 @@
 
     <div class="row">
         <div class="col">
-            <h1 class="text-center">Contact</h1>
+            <h1 class="text-center">Bungalow Bliss - Find us!</h1>
+            <p>
+                Bungalow Bliss is your ultimate destination for unforgettable holiday experiences! We are a premium vacation rental company specializing in providing our guests with the most luxurious, comfortable, and stylish bungalows for their perfect getaway. Our handpicked selection of holiday homes offers something for everyone - from beachfront bungalows to secluded mountain retreats, each property is carefully curated to ensure a memorable and relaxing stay. With exceptional amenities, personalized service, and attention to detail, we strive to exceed your expectations and provide you with a truly blissful experience. Book your next vacation with Bungalow Bliss and let us take care of the rest.
+            </p>
         </div>
     </div>
+    
+    <div class="row">
+        <iframe scrolling="no" marginheight="0" marginwidth="0" id="gmap_canvas" src="https://maps.google.com/maps?width=800&amp;height=600&amp;hl=en&amp;q=tonowhere%20USA+(Bungalow%20Bliss)&amp;t=&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed" width="800" height="600" frameborder="0"></iframe>
+    </div>
+
 </div>
 {{end}}
