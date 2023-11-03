@@ -1,2 +1,0 @@
-add_index("reservations", "email", {})
-add_index("reservations", "full_name", {})

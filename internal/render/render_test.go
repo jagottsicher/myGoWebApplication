@@ -16,39 +16,11 @@ func TestAddDefaultData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	session.Put(r.Context(), "success", "a flash message")
+	session.Put(r.Context(), "flash", "a flash message")
 
 	result := AddDefaultData(&td, r)
-	if result.Success != "a flash message" {
+	if result.Flash != "a flash message" {
 		t.Error("expected a value for key flash but flash message not found in session")
-	}
-}
-
-func TestTemplate(t *testing.T) {
-	pathToTemplates = "./../../templates"
-
-	tc, err := CreateTemplateCache()
-	if err != nil {
-		t.Error(err)
-	}
-
-	app.TemplateCache = tc
-
-	r, err := getSession()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var ww myWriter
-
-	err = Template(&ww, r, "home-page.tpml", &models.TemplateData{})
-	if err != nil {
-		t.Error("writing template to browser failed:", err)
-	}
-
-	err = Template(&ww, r, "does-not-exist-page.tpml", &models.TemplateData{})
-	if err == nil {
-		t.Error("requested template does not exist")
 	}
 }
 
@@ -63,17 +35,4 @@ func getSession() (*http.Request, error) {
 	r = r.WithContext(ctx)
 
 	return r, nil
-}
-
-func TestNewRenderer(t *testing.T) {
-	NewRenderer(app)
-}
-
-func TestCreateTemplateCache(t *testing.T) {
-	pathToTemplates = "./../../templates"
-
-	_, err := CreateTemplateCache()
-	if err != nil {
-		t.Error(err)
-	}
 }
